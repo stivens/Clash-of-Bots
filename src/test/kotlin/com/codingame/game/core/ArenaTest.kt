@@ -8,20 +8,24 @@ class ArenaTest : FeatureSpec({
         scenario("should properly parse the map") {
             val raw =
                 """
-                |   ########
-                |   #.....E#
-                |   ########
+                |--------------
+                |---########---
+                |---#.....E#---
+                |---########---
+                |--------------
                 """.trimMargin()
 
             val arena = Arena.of(raw)
 
-            arena.width shouldBe 11
-            arena.height shouldBe 3
+            arena.width shouldBe 14
+            arena.height shouldBe 5
 
             arena.board shouldBe arrayOf(
-                VOID, VOID, VOID, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL,
-                VOID, VOID, VOID, WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, ENTRY, WALL,
-                VOID, VOID, VOID, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL,
+                VOID, VOID, VOID, VOID, VOID, VOID, VOID, VOID, VOID, VOID, VOID, VOID, VOID, VOID,
+                VOID, VOID, VOID, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, VOID, VOID, VOID,
+                VOID, VOID, VOID, WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, ENTRY, WALL, VOID, VOID, VOID,
+                VOID, VOID, VOID, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, VOID, VOID, VOID,
+                VOID, VOID, VOID, VOID, VOID, VOID, VOID, VOID, VOID, VOID, VOID, VOID, VOID, VOID,
             )
         }
     }
