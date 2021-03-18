@@ -1,7 +1,6 @@
 package com.codingame.game.core
 
 import com.codingame.game.Player
-import javax.swing.text.Position
 
 sealed class ArenaObject
 
