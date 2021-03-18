@@ -21,6 +21,7 @@ dependencies {
     implementation 'com.codingame.gameengine:module-entities:3.15.0'
     implementation 'com.codingame.gameengine:runner:3.15.0'
 
+    compile "io.vavr:vavr:0.10.3"
     compile "io.vavr:vavr-kotlin:0.10.2"
 
     testImplementation 'io.kotest:kotest-runner-junit5-jvm:4.4.3'
@@ -29,4 +30,12 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = '1.8'
+}
+
+compileTestKotlin {
+    kotlinOptions.jvmTarget = '1.8'
 }
