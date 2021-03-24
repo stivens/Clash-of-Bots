@@ -6,7 +6,7 @@ import io.kotest.data.row
 import io.kotest.matchers.shouldBe
 
 class ActionTest : FeatureSpec({
-    feature("Action.of (a.k.a parser)") {
+    feature("Action.tryParse") {
         scenario("should return proper actions when player delivered valid output") {
             forAll(
                 row("move up",      Move(Direction.UP)),
@@ -20,7 +20,7 @@ class ActionTest : FeatureSpec({
                 row("guard",        GUARD),
                 row("suicide",      SUICIDE)
             ) { playerOutput, expectedAction ->
-                val result = Action.of(playerOutput)
+                val result = Action.tryParse(playerOutput)
 
                 result.isSuccess shouldBe true
                 result.get() shouldBe expectedAction
@@ -35,7 +35,7 @@ class ActionTest : FeatureSpec({
                 row("foobar", -1),
                 row("Do you know the definition of insanity?", -1)
             ) { playerOutput, _ ->
-                Action.of(playerOutput).isFailure shouldBe true
+                Action.tryParse(playerOutput).isFailure shouldBe true
             }
         }
     }

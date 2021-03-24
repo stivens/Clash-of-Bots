@@ -7,7 +7,7 @@ import java.lang.IllegalArgumentException
 
 sealed class Action {
     companion object {
-        fun of(userOutput: String): Try<Action> = Try {
+        fun tryParse(userOutput: String): Try<Action> = Try {
             val tokens = userOutput.split(" ")
             val majorKeyword = tokens.first()
 
