@@ -9,6 +9,11 @@ class Arena private constructor(
 ) {
     fun get(position: Position): ArenaObject = board[normalizedIndex(position.x, position.y)]
 
+
+    fun putNewRobot(robot: Robot, position: Position) {
+        board[normalizedIndex(position.x, position.y)] = robot
+    }
+
     private fun normalizedIndex(x: Int, y: Int): Int {
         val xWithOverflow = if (x < 0) width + x else x
         val yWithOverflow = if (y < 0) height + y else y
