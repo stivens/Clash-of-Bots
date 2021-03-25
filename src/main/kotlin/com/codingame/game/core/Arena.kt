@@ -15,8 +15,17 @@ class Arena private constructor(
     }
 
     private fun normalizedIndex(x: Int, y: Int): Int {
-        val xWithOverflow = if (x < 0) width + x else x
-        val yWithOverflow = if (y < 0) height + y else y
+        val xWithOverflow =
+            when {
+                x < 0 -> width + x
+                x >= width -> x % width
+                else -> x
+            }
+        val yWithOverflow = when {
+            y < 0 -> height + y
+            y >= height -> y % height
+            else -> y
+        }
 
         return yWithOverflow * width + xWithOverflow
     }
