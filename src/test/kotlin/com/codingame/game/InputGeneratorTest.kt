@@ -3,12 +3,11 @@ package com.codingame.game
 import com.codingame.game.core.Arena
 import com.codingame.game.core.Position
 import com.codingame.game.core.Robot
-import io.kotest.core.spec.style.FeatureSpec
+import io.kotest.core.spec.style.ShouldSpec
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.string.shouldContain
 
-class InputGeneratorTest : FeatureSpec({
-    feature("generateInputFor") {
+class InputGeneratorTest : ShouldSpec({
+    context("generateInputFor") {
         val arena = this.javaClass.getResource("/arenas/testarena.txt").readText().let { Arena.of(it) }
 
         val player1 = Player()
@@ -25,7 +24,7 @@ class InputGeneratorTest : FeatureSpec({
             Robot(id = 5, owner = player2, health =  42, position = Position(9, 9)),
         ).onEach { robot -> arena.putNewRobot(robot, robot.position) }
 
-        scenario("should return proper number of robots") {
+        should("return proper number of robots") {
             val player1input = InputGenerator.generateInputFor(player1, arena)
             val player2input = InputGenerator.generateInputFor(player2, arena)
 
@@ -33,7 +32,7 @@ class InputGeneratorTest : FeatureSpec({
             player2input.split("\n")[1] shouldBe "nrobots: ${player2robots.size}"
         }
 
-        scenario("should return proper vision range") {
+        should("return proper vision range") {
             val input1 = InputGenerator.generateInputFor(player1, arena, visionRange = 1)
             val input2 = InputGenerator.generateInputFor(player1, arena, visionRange = 3)
 
@@ -41,7 +40,7 @@ class InputGeneratorTest : FeatureSpec({
             input2.split("\n").first() shouldBe "vision: 3"
         }
 
-        scenario("should return proper minimap for given robot") {
+        should("return proper minimap for given robot") {
             val player1input = InputGenerator.generateInputFor(player1, arena)
                 .split("\n").drop(3).joinToString(separator = "\n")
             val player2input = InputGenerator.generateInputFor(player2, arena, visionRange = 3)
