@@ -9,7 +9,12 @@ class Arena private constructor(
 ) {
     fun get(position: Position): ArenaObject = board[normalizedIndex(position.x, position.y)]
 
-    private fun normalizedIndex(x: Int, y: Int): Int = y * width + x
+    private fun normalizedIndex(x: Int, y: Int): Int {
+        val xWithOverflow = if (x < 0) width + x else x
+        val yWithOverflow = if (y < 0) height + y else y
+
+        return yWithOverflow * width + xWithOverflow
+    }
 
     companion object {
         fun of(shape: String): Arena {
