@@ -6,7 +6,7 @@ internal object InputGenerator {
     internal fun generateInputFor(player: Player, arena: Arena, visionRange: Int = 1): String =
         arena
             .getAllRobotsOwnedBy(player)
-            .map { robot -> robot.position.allNeighborsInRange(visionRange) }
+            .map { (_, position) -> position.allNeighborsInRange(visionRange) }
             .map { rows ->
                 rows.map { cols ->
                     cols.map { pos ->
@@ -26,17 +26,14 @@ internal object InputGenerator {
                 """.trimMargin()
             }
 
-    private fun translateToStringRepr(arenaObject: ArenaObject, perspectiveOf: Player): String =
-        when (arenaObject) {
-            is VOID  -> "-"
-            is EMPTY -> "."
-            is ENTRY -> "."
-            is WALL  -> "#"
-            is Robot -> {
-                if (arenaObject.owner == perspectiveOf) {
-                    arenaObject.health.toString()
+    private fun translateToStringRepr(maybeRobot: Robot?, perspectiveOf: Player): String =
+        when (maybeRobot) {
+            null -> "0"
+            else -> {
+                if (maybeRobot.owner == perspectiveOf) {
+                    maybeRobot.health.toString()
                 } else {
-                    (-arenaObject.health).toString()
+                    maybeRobot.health.unaryMinus().toString()
                 }
             }
         }

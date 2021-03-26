@@ -9,33 +9,8 @@ data class Position(val x: Int, val y: Int) {
                 Position(neighborX, neighborY)
             }
         }
-}
 
-class Arena private constructor(
-    val width: Int,
-    val height: Int,
-    val board: Array<ArenaObject>
-) {
-    fun get(position: Position): ArenaObject = board[normalizedIndex(position.x, position.y)]
-
-    fun getAllRobotsOwnedBy(player: Player): List<Robot> =
-        board
-            .mapNotNull {
-                when (it) {
-                    is Robot ->
-                        if (it.owner == player)
-                            it
-                        else null
-                    else -> null
-                }
-            }
-            .sortedBy { it.id }
-
-    fun putNewRobot(robot: Robot, position: Position) {
-        board[normalizedIndex(position.x, position.y)] = robot
-    }
-
-    private fun normalizedIndex(x: Int, y: Int): Int {
+    fun normalizeOverflow(width: Int, height: Int): Position {
         val xWithOverflow =
             when {
                 x < 0 -> width + x
@@ -48,39 +23,32 @@ class Arena private constructor(
             else -> y
         }
 
-        return yWithOverflow * width + xWithOverflow
+        return Position(xWithOverflow, yWithOverflow)
+    }
+}
+
+data class Arena constructor(
+    val width: Int,
+    val height: Int,
+) {
+    private val board: Array<Array<Robot?>> = Array(height) { Array(width) { null } }
+
+    fun get(position: Position): Robot? {
+        val (x, y) = position.normalizeOverflow(width, height)
+        return get(x, y)
     }
 
-    companion object {
-        fun of(shape: String): Arena {
-            val rows = shape.split("\n")
+    fun get(x: Int, y: Int): Robot? = board[y][x]
 
-            require(rows.isNotEmpty()) { "Arena cannot be empty" }
-
-            val height = rows.size
-            val width = rows.first().length
-
-            require(rows.all { it.length == width }) { "Invalid arena shape" }
-
-            val board = Array<ArenaObject>(height * width) { VOID }
-
-            rows.withIndex().forEach { indexedRow ->
-                val (y, row) = indexedRow
-
-                row.withIndex().forEach { indexedCol ->
-                    val (x, value) = indexedCol
-                    val index = y * width + x
-
-                    board[index] = when (value) {
-                        '.' -> EMPTY
-                        '#' -> WALL
-                        'E' -> ENTRY
-                        else -> VOID
-                    }
-                }
+    fun getAllRobotsOwnedBy(player: Player): List<Pair<Robot, Position>> =
+        (0 until height).flatMap { y ->
+            (0 until width).mapNotNull { x ->
+                get(x, y)?.let { Pair(it, Position(x, y)) }
             }
+        }.filter { (robot, _) -> robot.owner == player }
 
-            return Arena(width, height, board)
-        }
+    fun putNewRobot(robot: Robot, position: Position) {
+        val (x, y) = position.normalizeOverflow(width, height)
+        board[y][x] = robot
     }
 }

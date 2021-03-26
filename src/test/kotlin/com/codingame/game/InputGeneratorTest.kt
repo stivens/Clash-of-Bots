@@ -8,21 +8,21 @@ import io.kotest.matchers.shouldBe
 
 class InputGeneratorTest : ShouldSpec({
     context("generateInputFor") {
-        val arena = this.javaClass.getResource("/arenas/testarena.txt").readText().let { Arena.of(it) }
+        val arena = Arena(width = 12, height = 12)
 
         val player1 = Player()
         val player2 = Player()
 
         val player1robots = listOf(
-            Robot(id = 1, owner = player1, health = 100, position = Position(3, 3)),
-            Robot(id = 2, owner = player1, health = 100, position = Position(5, 8)),
-            Robot(id = 3, owner = player1, health =  50, position = Position(0, 0)),
-        ).onEach { robot -> arena.putNewRobot(robot, robot.position) }
+            Pair( Robot(owner = player1, health = 100), Position(3, 3) ),
+            Pair( Robot(owner = player1, health = 100), Position(5, 8) ),
+            Pair( Robot(owner = player1, health =  50), Position(0, 0) ),
+        ).onEach { (robot, position) -> arena.putNewRobot(robot, position) }
 
         val player2robots = listOf(
-            Robot(id = 4, owner = player2, health = 100, position = Position(3, 4)),
-            Robot(id = 5, owner = player2, health =  42, position = Position(9, 9)),
-        ).onEach { robot -> arena.putNewRobot(robot, robot.position) }
+            Pair( Robot(owner = player2, health = 100), Position(3, 4) ),
+            Pair( Robot(owner = player2, health =  42), Position(9, 9) ),
+        ).onEach { (robot, position) -> arena.putNewRobot(robot, position) }
 
         should("return proper number of robots") {
             val player1input = InputGenerator.generateInputFor(player1, arena)
@@ -47,35 +47,35 @@ class InputGeneratorTest : ShouldSpec({
                 .split("\n").drop(3).joinToString(separator = "\n")
 
             player1input shouldBe """
-                . . .
-                . 100 .
-                . -100 .
+                0 0 0
+                0 50 0
+                0 0 0
                 
-                . . .
-                . 100 .
-                . . .
+                0 0 0
+                0 100 0
+                0 -100 0
                 
-                . . .
-                . 50 .
-                . . .
+                0 0 0
+                0 100 0
+                0 0 0
             """.trimIndent()
 
             player2input shouldBe """
-                . . . . . . .
-                . . . . . . .
-                . . . -100 . . .
-                . . . 100 . . .
-                . . . . . . .
-                . . . . . . .
-                . . . . . . .
+                0 0 0 0 0 0 0
+                0 0 0 0 0 0 0
+                0 0 0 -100 0 0 0
+                0 0 0 100 0 0 0
+                0 0 0 0 0 0 0
+                0 0 0 0 0 0 0
+                0 0 0 0 0 0 0
                 
-                . . . . . . .
-                . . . . . . .
-                . . . . . . .
-                . . . 42 . . .
-                . . . . . . .
-                . . . . . . .
-                . . . . . . -50
+                0 0 0 0 0 0 0
+                0 0 0 0 0 0 0
+                0 0 0 0 0 0 0
+                0 0 0 42 0 0 0
+                0 0 0 0 0 0 0
+                0 0 0 0 0 0 0
+                0 0 0 0 0 0 -50
             """.trimIndent()
         }
     }
