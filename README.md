@@ -7,4 +7,4 @@ TODO()
 
 -----
 
-[Game is inspired by RobotGame](https://python101.readthedocs.io/pl/latest/rg/)
+[RobotGame](https://python101.readthedocs.io/pl/latest/rg/)
