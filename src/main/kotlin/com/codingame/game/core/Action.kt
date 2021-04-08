@@ -15,8 +15,6 @@ sealed class Action {
     data class Attack(val direction: Direction, override val debugMsg: String? = null) : Action()
     data class Guard                           (override val debugMsg: String? = null) : Action()
     data class Selfdestruction                 (override val debugMsg: String? = null) : Action()
-    data class Appear                          (override val debugMsg: String? = null) : Action()
-    data class Die                             (override val debugMsg: String? = null) : Action()
 
     companion object {
         fun tryParse(userOutput: String): Try<Action> = Try {
