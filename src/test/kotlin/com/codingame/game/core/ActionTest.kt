@@ -9,16 +9,16 @@ class ActionTest : FeatureSpec({
     feature("Action.tryParse") {
         scenario("should return proper actions when player delivered valid output") {
             forAll(
-                row("move up",      Move(Direction.UP)),
-                row("move down",    Move(Direction.DOWN)),
-                row("move left",    Move(Direction.LEFT)),
-                row("move right",   Move(Direction.RIGHT)),
-                row("attack up",    Attack(Direction.UP)),
-                row("attack down",  Attack(Direction.DOWN)),
-                row("attack left",  Attack(Direction.LEFT)),
-                row("attack right", Attack(Direction.RIGHT)),
-                row("guard",        GUARD),
-                row("suicide",      SUICIDE)
+                row("move up",         Move(Direction.UP)),
+                row("move down",       Move(Direction.DOWN)),
+                row("move left",       Move(Direction.LEFT)),
+                row("move right",      Move(Direction.RIGHT)),
+                row("attack up",       Attack(Direction.UP)),
+                row("attack down",     Attack(Direction.DOWN)),
+                row("attack left",     Attack(Direction.LEFT)),
+                row("attack right",    Attack(Direction.RIGHT)),
+                row("guard",           GUARD),
+                row("autodestruction", AUTODESTRUCTION)
             ) { playerOutput, expectedAction ->
                 val result = Action.tryParse(playerOutput)
 

@@ -15,7 +15,7 @@ sealed class Action {
                 "move" -> Move(parseDirection(tokens[1]))
                 "attack" -> Attack(parseDirection(tokens[1]))
                 "guard" -> GUARD
-                "suicide" -> SUICIDE
+                "autodestruction" -> AUTODESTRUCTION
                 else -> throw IllegalArgumentException("Invalid sequence: $userOutput")
             }
         }
@@ -35,5 +35,5 @@ enum class Direction { UP, DOWN, LEFT, RIGHT }
 data class Move(val direction: Direction) : Action()
 data class Attack(val direction: Direction) : Action()
 object GUARD : Action()
-object SUICIDE : Action()
+object AUTODESTRUCTION : Action()
 object APPEAR : Action()
