@@ -1,6 +1,7 @@
 package com.codingame.game.core
 
 import com.codingame.game.Player
+import com.codingame.game.util.Vector
 
 data class Arena constructor(
     val width: Int,
@@ -67,4 +68,7 @@ data class Position(val x: Int, val y: Int) {
 
         return Position(xWithOverflow, yWithOverflow)
     }
+
+    fun apply(v: Vector): Position =
+        Position(x + v.dx, y + v.dy)
 }
