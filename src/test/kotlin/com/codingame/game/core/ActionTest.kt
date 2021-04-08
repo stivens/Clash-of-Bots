@@ -5,20 +5,49 @@ import io.kotest.data.forAll
 import io.kotest.data.row
 import io.kotest.matchers.shouldBe
 
+import com.codingame.game.core.Direction.*
+import com.codingame.game.core.Action.*
+
 class ActionTest : FeatureSpec({
     feature("Action.tryParse") {
         scenario("should return proper actions when player delivered valid output") {
             forAll(
-                row("move up",         Move(Direction.UP)),
-                row("move down",       Move(Direction.DOWN)),
-                row("move left",       Move(Direction.LEFT)),
-                row("move right",      Move(Direction.RIGHT)),
-                row("attack up",       Attack(Direction.UP)),
-                row("attack down",     Attack(Direction.DOWN)),
-                row("attack left",     Attack(Direction.LEFT)),
-                row("attack right",    Attack(Direction.RIGHT)),
-                row("guard",           GUARD),
-                row("autodestruction", AUTODESTRUCTION)
+                row("move up",
+                    Move(UP)),
+
+                row("move down",
+                    Move(DOWN)),
+
+                row("move left",
+                    Move(LEFT)),
+
+                row("move right",
+                    Move(RIGHT)),
+
+                row("attack up",
+                    Attack(UP)),
+
+                row("attack down",
+                    Attack(DOWN)),
+
+                row("attack left",
+                    Attack(LEFT)),
+
+                row("attack right",
+                    Attack(RIGHT)),
+
+                row("guard",
+                    Guard()),
+
+                row("autodestruction",
+                    Autodestruction()),
+
+                row("guard some debug msg",
+                    Guard(debugMsg = "some debug msg")),
+
+                row("attack down hello world",
+                    Attack(DOWN, debugMsg = "hello world"))
+
             ) { playerOutput, expectedAction ->
                 val result = Action.tryParse(playerOutput)
 
@@ -31,6 +60,8 @@ class ActionTest : FeatureSpec({
             forAll(
                 row("move", -1),
                 row("attack", -1),
+                row("attack north", -1),
+                row("attack him", -1),
                 row("42", -1),
                 row("foobar", -1),
                 row("Do you know the definition of insanity?", -1)
