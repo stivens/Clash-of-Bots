@@ -31,7 +31,7 @@ class ArenaTest : FeatureSpec({
             arena.get(pos2) shouldBe robot
         }
 
-        scenario("robot should be spawn-killed if occupies target position") {
+        scenario("robot should be spawn-killed if it occupies target position") {
             val pos = Position(0, 0)
             val robot1 = Robot(owner = Player())
             val robot2 = Robot(owner = Player())
