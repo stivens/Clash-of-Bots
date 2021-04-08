@@ -48,15 +48,15 @@ class InputGeneratorTest : ShouldSpec({
 
             player1input shouldBe """
                 0 0 0
-                0 50 0
-                0 0 0
-                
-                0 0 0
                 0 100 0
                 0 -100 0
                 
                 0 0 0
                 0 100 0
+                0 0 0
+                
+                0 0 0
+                0 50 0
                 0 0 0
             """.trimIndent()
 
