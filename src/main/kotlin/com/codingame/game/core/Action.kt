@@ -4,10 +4,12 @@ import io.vavr.control.Try
 import io.vavr.kotlin.*
 import java.lang.IllegalArgumentException
 
-import com.codingame.game.core.Direction.*
+import com.codingame.game.core.Action.Direction.*
 
 sealed class Action {
     abstract val debugMsg: String?
+
+    enum class Direction { UP, DOWN, LEFT, RIGHT }
 
     data class Move  (val direction: Direction, override val debugMsg: String? = null) : Action()
     data class Attack(val direction: Direction, override val debugMsg: String? = null) : Action()

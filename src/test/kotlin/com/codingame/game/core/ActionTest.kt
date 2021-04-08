@@ -5,8 +5,8 @@ import io.kotest.data.forAll
 import io.kotest.data.row
 import io.kotest.matchers.shouldBe
 
-import com.codingame.game.core.Direction.*
 import com.codingame.game.core.Action.*
+import com.codingame.game.core.Action.Direction.*
 
 class ActionTest : FeatureSpec({
     feature("Action.tryParse") {
