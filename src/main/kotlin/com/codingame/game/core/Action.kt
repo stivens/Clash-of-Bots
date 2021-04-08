@@ -33,7 +33,7 @@ sealed class Action {
                 "guard" ->
                     Guard( parseDebugMsg(tokens.drop(1)) )
 
-                "autodestruction" ->
+                "selfdestruction" ->
                     Selfdestruction( parseDebugMsg(tokens.drop(1)) )
 
                 else ->
