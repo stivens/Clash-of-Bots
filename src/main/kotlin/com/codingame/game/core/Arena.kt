@@ -7,6 +7,7 @@ data class Arena constructor(
     val height: Int,
 ) {
     private val board: Array<Array<Robot?>> = Array(height) { Array(width) { null } }
+    private val robots: MutableMap<Robot, Position> = mutableMapOf()
 
     fun get(position: Position): Robot? {
         val (x, y) = position.normalizeOverflow(width, height)
@@ -15,16 +16,24 @@ data class Arena constructor(
 
     fun get(x: Int, y: Int): Robot? = board[y][x]
 
+    fun getAllRobots(): List<Pair<Robot, Position>> = robots.toList()
+
     fun getAllRobotsOwnedBy(player: Player): List<Pair<Robot, Position>> =
-        (0 until height).flatMap { y ->
-            (0 until width).mapNotNull { x ->
-                get(x, y)?.let { Pair(it, Position(x, y)) }
-            }
-        }.filter { (robot, _) -> robot.owner == player }
+        getAllRobots()
+            .filter { (robot, _) -> robot.owner == player }
+
+    fun getPositionOf(robot: Robot): Position? = robots[robot]
 
     fun putNewRobot(robot: Robot, position: Position) {
-        val (x, y) = position.normalizeOverflow(width, height)
+        val normalizedPosition = position.normalizeOverflow(width, height)
+        val (x, y) = normalizedPosition
+
+        if (board[y][x] != null) {
+            robots.remove(board[y][x])
+        }
+
         board[y][x] = robot
+        robots[robot] = normalizedPosition
     }
 }
 
