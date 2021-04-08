@@ -39,8 +39,8 @@ class ActionTest : FeatureSpec({
                 row("guard",
                     Guard()),
 
-                row("autodestruction",
-                    Autodestruction()),
+                row("selfdestruction",
+                    Selfdestruction()),
 
                 row("guard some debug msg",
                     Guard(debugMsg = "some debug msg")),

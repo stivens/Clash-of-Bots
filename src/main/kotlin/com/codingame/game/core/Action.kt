@@ -14,7 +14,7 @@ sealed class Action {
     data class Move  (val direction: Direction, override val debugMsg: String? = null) : Action()
     data class Attack(val direction: Direction, override val debugMsg: String? = null) : Action()
     data class Guard                           (override val debugMsg: String? = null) : Action()
-    data class Autodestruction                 (override val debugMsg: String? = null) : Action()
+    data class Selfdestruction                 (override val debugMsg: String? = null) : Action()
     data class Appear                          (override val debugMsg: String? = null) : Action()
     data class Die                             (override val debugMsg: String? = null) : Action()
 
@@ -34,7 +34,7 @@ sealed class Action {
                     Guard( parseDebugMsg(tokens.drop(1)) )
 
                 "autodestruction" ->
-                    Autodestruction( parseDebugMsg(tokens.drop(1)) )
+                    Selfdestruction( parseDebugMsg(tokens.drop(1)) )
 
                 else ->
                     throw IllegalArgumentException("Invalid sequence: $userOutput")

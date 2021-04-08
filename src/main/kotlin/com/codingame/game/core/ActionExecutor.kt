@@ -7,7 +7,7 @@ object ActionExecutor {
         Guard::class           to ::executeGuards,
         Move::class            to ::executeMoves,
         Attack::class          to ::executeAttacks,
-        Autodestruction::class to ::executeAutodestructions,
+        Selfdestruction::class to ::executeSelfdestructions,
     )
 
     fun execute(actions: List<RobotAction>, arena: Arena) {
@@ -33,7 +33,7 @@ object ActionExecutor {
         TODO()
     }
 
-    private fun executeAutodestructions(actions: List<RobotAction>, arena: Arena) {
+    private fun executeSelfdestructions(actions: List<RobotAction>, arena: Arena) {
         TODO()
     }
 }
