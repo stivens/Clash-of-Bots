@@ -17,12 +17,12 @@ class InputGeneratorTest : ShouldSpec({
             Pair( Robot(owner = player1, health = 100), Position(3, 3) ),
             Pair( Robot(owner = player1, health = 100), Position(5, 8) ),
             Pair( Robot(owner = player1, health =  50), Position(0, 0) ),
-        ).onEach { (robot, position) -> arena.putNewRobot(robot, position) }
+        ).onEach { (robot, position) -> arena.emplace(robot, position) }
 
         val player2robots = listOf(
             Pair( Robot(owner = player2, health = 100), Position(3, 4) ),
             Pair( Robot(owner = player2, health =  42), Position(9, 9) ),
-        ).onEach { (robot, position) -> arena.putNewRobot(robot, position) }
+        ).onEach { (robot, position) -> arena.emplace(robot, position) }
 
         should("return proper number of robots") {
             val player1input = InputGenerator.generateInputFor(player1, arena)

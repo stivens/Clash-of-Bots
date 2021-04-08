@@ -24,16 +24,23 @@ data class Arena constructor(
 
     fun getPositionOf(robot: Robot): Position? = robots[robot]
 
-    fun putNewRobot(robot: Robot, position: Position) {
+    fun emplace(robot: Robot, position: Position) {
         val normalizedPosition = position.normalizeOverflow(width, height)
         val (x, y) = normalizedPosition
 
-        if (board[y][x] != null) {
-            robots.remove(board[y][x])
-        }
+        remove(robot)
+        board[y][x]?.let { remove(it) }
 
         board[y][x] = robot
         robots[robot] = normalizedPosition
+    }
+
+    fun remove(robot: Robot) {
+        robots[robot]?.let { (x, y) ->
+            board[y][x] = null
+        }
+
+        robots.remove(robot)
     }
 }
 
