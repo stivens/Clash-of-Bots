@@ -29,7 +29,25 @@ object ActionExecutor {
     }
 
     private fun executeMoves(actions: List<RobotAction>, arena: Arena) {
-        TODO()
+        val targetPositions =
+            actions.groupBy { (robot, action) -> require(action is Move)
+
+                val currentPosition = arena.getPositionOf(robot)
+                require(currentPosition != null)
+
+                val targetPosition = currentPosition.apply(direction2vector(action.direction))
+                targetPosition.normalizeOverflow(width = arena.width, height = arena.height)
+
+            }.mapValues { it.value.map { ra -> ra.robot } }
+
+        targetPositions.forEach { (position, robots) ->
+            if (robots.size == 1) {
+                val robot = robots.single()
+                arena.emplace(robot, position)
+            } else {
+                robots.forEach { damageRobot(it, Config.Robots.COLLISION_DAMAGE) }
+            }
+        }
     }
 
     private fun executeAttacks(actions: List<RobotAction>, arena: Arena) {
