@@ -18,7 +18,11 @@ object ActionExecutor {
         disableAllGuards(arena)
 
         orderOfPrecedence.forEach { (actionClass, handler) ->
-            handler( groupedActions[actionClass].orEmpty(), arena )
+            val actions = discardCanceledActions( groupedActions[actionClass].orEmpty() )
+
+            handler(actions, arena)
+
+            clearDeadRobots(arena)
         }
     }
 
@@ -89,4 +93,14 @@ object ActionExecutor {
 
         robot.health -= actualDamage
     }
+
+    private fun clearDeadRobots(arena: Arena) {
+        arena.getAllRobots()
+            .map { (robot, _position) -> robot }
+            .filter { it.isNotAlive }
+            .forEach { arena.remove(it) }
+    }
+
+    private fun discardCanceledActions(actions: List<RobotAction>): List<RobotAction> =
+        actions.filter { (robot, _) -> robot.isAlive }
 }
