@@ -4,7 +4,7 @@ import com.codingame.game.Config
 import com.codingame.game.Player
 import java.util.*
 
-data class Robot(
+class Robot(
     val owner: Player,
     var health: Int = Config.Robots.MAX_HEALTH,
     var guardUp: Boolean = false,
@@ -12,4 +12,8 @@ data class Robot(
 ) {
     val isAlive: Boolean get() = health > 0
     val isNotAlive: Boolean get() = !isAlive
+
+    override fun hashCode() = uuid.hashCode()
+    override fun equals(other: Any?) =
+        other is Robot && other.uuid == this.uuid
 }
