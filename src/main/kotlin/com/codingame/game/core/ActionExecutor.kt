@@ -61,7 +61,20 @@ object ActionExecutor {
     }
 
     private fun executeSelfdestructions(actions: List<RobotAction>, arena: Arena) {
-        TODO()
+        actions.forEach { (robot, action) -> require(action is Selfdestruction)
+
+            val position = arena.getPositionOf(robot)
+            require(position != null)
+
+            val affectedRobots = position
+                .allNeighborsInRange(Config.Robots.EXPLOSION_RANGE).flatten()
+                .mapNotNull { arena.get(it) }
+
+            affectedRobots.forEach { damageRobot(it, Config.Robots.EXPLOSION_DAMAGE) }
+
+            robot.health = -1
+
+        }
     }
 
     private fun disableAllGuards(arena: Arena) {
