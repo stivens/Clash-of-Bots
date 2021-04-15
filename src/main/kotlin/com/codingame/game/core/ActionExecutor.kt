@@ -18,9 +18,9 @@ object ActionExecutor {
         disableAllGuards(arena)
 
         orderOfPrecedence.forEach { (actionClass, handler) ->
-            val actions = discardCanceledActions( groupedActions[actionClass].orEmpty() )
+            val currentBatch = discardCanceledActions( groupedActions[actionClass].orEmpty() )
 
-            handler(actions, arena)
+            handler(currentBatch, arena)
 
             clearDeadRobots(arena)
         }
