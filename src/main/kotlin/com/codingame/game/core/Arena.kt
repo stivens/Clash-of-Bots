@@ -3,10 +3,7 @@ package com.codingame.game.core
 import com.codingame.game.Player
 import com.codingame.game.util.Vector
 
-data class Arena constructor(
-    val width: Int,
-    val height: Int,
-) {
+class Arena (val width: Int, val height: Int) {
     private val board: Array<Array<Robot?>> = Array(height) { Array(width) { null } }
     private val robots: MutableMap<Robot, Position> = mutableMapOf()
 
