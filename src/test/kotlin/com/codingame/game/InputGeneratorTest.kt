@@ -5,6 +5,8 @@ import com.codingame.game.core.Position
 import com.codingame.game.core.Robot
 import io.kotest.core.spec.style.ShouldSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
+import io.kotest.matchers.string.shouldContainOnlyOnce
 
 class InputGeneratorTest : ShouldSpec({
     context("generateInputFor") {
@@ -25,42 +27,48 @@ class InputGeneratorTest : ShouldSpec({
         ).onEach { (robot, position) -> arena.emplace(robot, position) }
 
         should("return proper number of robots") {
-            val player1input = InputGenerator.generateInputFor(player1, arena)
-            val player2input = InputGenerator.generateInputFor(player2, arena)
+            val (_, player1input) = InputGenerator.generateInputFor(player1, arena)
+            val (_, player2input) = InputGenerator.generateInputFor(player2, arena)
 
             player1input.split("\n")[1] shouldBe "nrobots: ${player1robots.size}"
             player2input.split("\n")[1] shouldBe "nrobots: ${player2robots.size}"
         }
 
         should("return proper vision range") {
-            val input1 = InputGenerator.generateInputFor(player1, arena, visionRange = 1)
-            val input2 = InputGenerator.generateInputFor(player1, arena, visionRange = 3)
+            val (_, input1) = InputGenerator.generateInputFor(player1, arena, visionRange = 1)
+            val (_, input2) = InputGenerator.generateInputFor(player1, arena, visionRange = 3)
 
             input1.split("\n").first() shouldBe "vision: 1"
             input2.split("\n").first() shouldBe "vision: 3"
         }
 
         should("return proper minimap for given robot") {
-            val player1input = InputGenerator.generateInputFor(player1, arena)
-                .split("\n").drop(3).joinToString(separator = "\n")
-            val player2input = InputGenerator.generateInputFor(player2, arena, visionRange = 3)
-                .split("\n").drop(3).joinToString(separator = "\n")
+            val player1input = InputGenerator.generateInputFor(player1, arena, visionRange = 1)
+                .let { (_, input) -> input.split("\n").drop(3).joinToString(separator = "\n") }
 
-            player1input shouldBe """
+            val player2input = InputGenerator.generateInputFor(player2, arena, visionRange = 3)
+                .let { (_, input) -> input.split("\n").drop(3).joinToString(separator = "\n") }
+
+
+            player1input shouldContainOnlyOnce """
                 0 0 0
                 0 100 0
                 0 -100 0
-                
+            """.trimIndent()
+
+            player1input shouldContainOnlyOnce """
                 0 0 0
                 0 100 0
                 0 0 0
-                
+            """.trimIndent()
+
+            player1input shouldContainOnlyOnce """
                 0 0 0
                 0 50 0
                 0 0 0
             """.trimIndent()
 
-            player2input shouldBe """
+            player2input shouldContainOnlyOnce """
                 0 0 0 0 0 0 0
                 0 0 0 0 0 0 0
                 0 0 0 -100 0 0 0
@@ -68,7 +76,9 @@ class InputGeneratorTest : ShouldSpec({
                 0 0 0 0 0 0 0
                 0 0 0 0 0 0 0
                 0 0 0 0 0 0 0
-                
+            """.trimIndent()
+
+            player2input shouldContainOnlyOnce """
                 0 0 0 0 0 0 0
                 0 0 0 0 0 0 0
                 0 0 0 0 0 0 0

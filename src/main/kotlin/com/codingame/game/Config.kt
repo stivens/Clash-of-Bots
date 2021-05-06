@@ -8,5 +8,6 @@ object Config {
         const val EXPLOSION_DAMAGE: Int = 4
         const val EXPLOSION_RANGE: Int = 1
         const val GUARD_MODIFIER: Double = 0.5
+        const val VISION_RANGE: Int = 1
     }
 }
