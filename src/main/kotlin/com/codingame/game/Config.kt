@@ -1,6 +1,9 @@
 package com.codingame.game
 
+import com.codingame.game.core.Action
+import com.codingame.game.core.Action.*
 import com.codingame.game.core.Position
+import kotlin.reflect.KClass
 
 object Config {
     object Robots {
@@ -16,5 +19,14 @@ object Config {
     object Referee {
         val SPAWN_SYMMETRY_CENTER = Position(0, 0)
         const val SPAWN_COMPLEMENT_RANGE = 1
+    }
+
+    object Interpreter {
+        val ACTION_PRIORITY = mapOf(
+                      Guard::class to 0,
+                       Move::class to 1,
+                     Attack::class to 2,
+            Selfdestruction::class to 3,
+        )
     }
 }

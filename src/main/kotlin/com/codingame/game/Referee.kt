@@ -1,22 +1,28 @@
 package com.codingame.game
 
 import com.codingame.game.core.Arena
+import com.codingame.game.core.Interpreter
 import com.codingame.game.core.Position
 import com.codingame.game.core.Robot
 import com.codingame.game.util.Symmetry
 import com.codingame.gameengine.core.AbstractReferee
 import com.codingame.gameengine.core.MultiplayerGameManager
+import com.codingame.gameengine.module.entities.GraphicEntityModule
 import com.google.inject.Inject
 
 class Referee : AbstractReferee() {
     @Inject private lateinit var gameManager: MultiplayerGameManager<Player>
+    @Inject private lateinit var graphicEntityModule: GraphicEntityModule
+
     private lateinit var presenter: Presenter
     private lateinit var arena: Arena
+    private lateinit var interpreter: Interpreter
 
     override fun init() {
         arena = loadArena()
-        presenter = Presenter(arena)
-        TODO("Not yet implemented")
+//        presenter = Presenter(arena, graphicEntityModule)
+//        interpreter = Interpreter(arena, presenter)
+        interpreter = Interpreter(arena, presenter = null)
     }
 
     override fun gameTurn(turn: Int) {
