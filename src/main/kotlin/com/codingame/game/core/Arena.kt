@@ -7,6 +7,13 @@ class Arena (val width: Int, val height: Int) {
     private val board: Array<Array<Robot?>> = Array(height) { Array(width) { null } }
     private val robots: MutableMap<Robot, Position> = mutableMapOf()
 
+    private val emptyPositions: MutableSet<Position> =
+        (0 until height).flatMap { y ->
+            (0 until width).mapNotNull { x ->
+                Position(x, y)
+            }
+        }.toMutableSet()
+
     fun get(position: Position): Robot? {
         val (x, y) = position.normalizeOverflow(width, height)
         return get(x, y)
@@ -31,15 +38,29 @@ class Arena (val width: Int, val height: Int) {
 
         board[y][x] = robot
         robots[robot] = normalizedPosition
+
+        emptyPositions.remove(normalizedPosition)
     }
 
     fun remove(robot: Robot) {
-        robots[robot]?.let { (x, y) ->
-            board[y][x] = null
+        robots[robot]?.let { pos ->
+            board[pos.y][pos.x] = null
+            emptyPositions.add(pos)
         }
 
         robots.remove(robot)
     }
+
+    fun getEmptyPositions(): Set<Position> = emptyPositions.toSet()
+
+    override fun toString(): String =
+        (0 until height).map { y ->
+            (0 until width).map { x ->
+
+                get(x, y)?.owner?.hashCode()?.toString()?.take(1) ?: "-"
+
+            }.joinToString(separator = " ")
+        }.joinToString(separator = "\n")
 }
 
 data class Position(val x: Int, val y: Int) {

@@ -2,6 +2,8 @@ package com.codingame.game.core
 
 import com.codingame.game.Player
 import io.kotest.core.spec.style.FeatureSpec
+import io.kotest.matchers.collections.shouldContain
+import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.shouldBe
 
 class ArenaTest : FeatureSpec({
@@ -16,6 +18,8 @@ class ArenaTest : FeatureSpec({
 
             arena.get(pos) shouldBe robot
             arena.getPositionOf(robot) shouldBe pos
+
+            arena.getEmptyPositions() shouldNotContain pos
         }
 
         scenario("robot position should be updated if it was already on the board") {
@@ -29,6 +33,9 @@ class ArenaTest : FeatureSpec({
             arena.getPositionOf(robot) shouldBe pos2
             arena.get(pos1) shouldBe null
             arena.get(pos2) shouldBe robot
+
+            arena.getEmptyPositions() shouldNotContain pos2
+            arena.getEmptyPositions() shouldContain pos1
         }
 
         scenario("robot should be spawn-killed if it occupies target position") {
@@ -54,6 +61,8 @@ class ArenaTest : FeatureSpec({
 
             arena.get(pos) shouldBe null
             arena.getPositionOf(robot) shouldBe null
+
+            arena.getEmptyPositions() shouldContain pos
         }
     }
 })
