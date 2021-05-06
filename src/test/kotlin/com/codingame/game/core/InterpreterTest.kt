@@ -18,25 +18,31 @@ class InterpreterTest : ShouldSpec({
 
             val robot1 = Robot(owner = Player(), health = 100)
             val robot2 = Robot(owner = Player(), health = 100)
+            val robot3 = Robot(owner = Player(), health = 100)
 
             val actions = listOf(
                 Pair(robot1, Move(UP)),
                 Pair(robot2, Move(RIGHT)),
+                Pair(robot3, Move(RIGHT)),
             )
 
             val pos1 = Position(x = 5, y = 5)
             val pos2 = Position(x = 9, y = 9)
+            val pos3 = Position(x = 8, y = 9)
 
             arena.emplace(robot1, pos1)
             arena.emplace(robot2, pos2)
+            arena.emplace(robot3, pos3)
 
             interpreter.execute(actions)
 
             arena.getPositionOf(robot1) shouldBe Position(pos1.x, pos1.y - 1)
             arena.getPositionOf(robot2) shouldBe Position(pos2.x + 1, pos2.y)
+            arena.getPositionOf(robot3) shouldBe pos2
 
             robot1.health shouldBe 100
             robot2.health shouldBe 100
+            robot3.health shouldBe 100
         }
 
         should("properly apply attacks") {
