@@ -36,7 +36,7 @@ class Referee : AbstractReferee() {
         if (emptyPositions.size < 4) return
 
         fun attemptToAssignSymmetricalPositions(): Boolean {
-            for (attempt in 1..10) {
+            for (attempt in 1..Config.Referee.SPAWN_ATTEMPTS_LIMIT) {
                 val randomEmptyPos = emptyPositions.random()
                 val symmetricalPos = Symmetry.centerSymmetry(center = Config.Referee.SPAWN_SYMMETRY_CENTER, a = randomEmptyPos)
 
@@ -49,10 +49,9 @@ class Referee : AbstractReferee() {
                         .firstOrNull()
 
                 val complementPos2 =
-                    symmetricalPos.allNeighborsInRange(Config.Referee.SPAWN_COMPLEMENT_RANGE).flatten()
-                        .filter { arena.get(it) == null && it !in listOf(randomEmptyPos, symmetricalPos, complementPos1) }
-                        .shuffled()
-                        .firstOrNull()
+                    Symmetry.centerSymmetry(center = Config.Referee.SPAWN_SYMMETRY_CENTER, a = complementPos1!!)
+
+                if (arena.get(complementPos2) is Robot) continue
 
                 randomEmptyPos.let { arena.emplace( Robot(owner = player1), it ) }
                 complementPos1?.let { arena.emplace( Robot(owner = player2), it ) }
@@ -66,18 +65,6 @@ class Referee : AbstractReferee() {
             return false
         }
 
-        fun assignFullyRandomly() {
-            val randomPositions = emptyPositions.shuffled()
-
-            arena.emplace( Robot(owner = player1), randomPositions[0] )
-            arena.emplace( Robot(owner = player1), randomPositions[1] )
-
-            arena.emplace( Robot(owner = player2), randomPositions[2] )
-            arena.emplace( Robot(owner = player2), randomPositions[3] )
-        }
-
-
-        if (!attemptToAssignSymmetricalPositions())
-            assignFullyRandomly()
+        attemptToAssignSymmetricalPositions()
     }
 }

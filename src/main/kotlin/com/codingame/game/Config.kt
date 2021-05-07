@@ -18,6 +18,7 @@ object Config {
 
     object Referee {
         val SPAWN_SYMMETRY_CENTER = Position(0, 0)
+        const val SPAWN_ATTEMPTS_LIMIT: Int = 15
         const val SPAWN_COMPLEMENT_RANGE = 1
     }
 
