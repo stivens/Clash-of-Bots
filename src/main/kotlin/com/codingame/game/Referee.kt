@@ -31,33 +31,34 @@ class Referee : AbstractReferee() {
 
     private fun loadArena(): Arena = Arena(20 ,20)
 
-    private fun spawnRobots(player1: Player, player2: Player) {
-        val emptyPositions = arena.getEmptyPositions()
-        if (emptyPositions.size < 4) return
+    private fun spawnRobots(player1: Player, player2: Player): Boolean {
+        val emptyPositions = arena.getEmptyPositions().minus(Config.Referee.SPAWN_SYMMETRY_CENTER)
+        if (emptyPositions.size < 4) return false
 
         fun attemptToAssignSymmetricalPositions(): Boolean {
             for (attempt in 1..Config.Referee.SPAWN_ATTEMPTS_LIMIT) {
                 val randomEmptyPos = emptyPositions.random()
                 val symmetricalPos = Symmetry.centerSymmetry(center = Config.Referee.SPAWN_SYMMETRY_CENTER, a = randomEmptyPos)
+                    .normalizeOverflow(arena.width, arena.height)
 
-                if (arena.get(symmetricalPos) is Robot) continue
-
-                val complementPos1 =
-                    randomEmptyPos.allNeighborsInRange(Config.Referee.SPAWN_COMPLEMENT_RANGE).flatten()
-                        .filter { arena.get(it) == null && it !in listOf(randomEmptyPos, symmetricalPos) }
+                val complementPos1 = randomEmptyPos.allNeighborsInRange(Config.Referee.SPAWN_COMPLEMENT_RANGE)
+                        .flatten()
                         .shuffled()
                         .firstOrNull()
+                        ?.normalizeOverflow(arena.width, arena.height) ?: continue
 
                 val complementPos2 =
-                    Symmetry.centerSymmetry(center = Config.Referee.SPAWN_SYMMETRY_CENTER, a = complementPos1!!)
+                    Symmetry.centerSymmetry(center = Config.Referee.SPAWN_SYMMETRY_CENTER, a = complementPos1)
+                        .normalizeOverflow(arena.width, arena.height)
 
-                if (arena.get(complementPos2) is Robot) continue
+                val positions = listOf(randomEmptyPos, symmetricalPos, complementPos1, complementPos2)
+                if (positions.distinct() != positions || !positions.all { emptyPositions.contains(it) }) continue
 
                 randomEmptyPos.let { arena.emplace( Robot(owner = player1), it ) }
-                complementPos1?.let { arena.emplace( Robot(owner = player2), it ) }
+                complementPos1.let { arena.emplace( Robot(owner = player2), it ) }
 
                 symmetricalPos.let { arena.emplace( Robot(owner = player2), it ) }
-                complementPos2?.let { arena.emplace( Robot(owner = player1), it ) }
+                complementPos2.let { arena.emplace( Robot(owner = player1), it ) }
 
                 return true
             }
@@ -65,6 +66,6 @@ class Referee : AbstractReferee() {
             return false
         }
 
-        attemptToAssignSymmetricalPositions()
+        return attemptToAssignSymmetricalPositions()
     }
 }
