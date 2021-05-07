@@ -57,7 +57,7 @@ class Arena (val width: Int, val height: Int) {
         (0 until height).map { y ->
             (0 until width).map { x ->
 
-                get(x, y)?.owner?.hashCode()?.toString()?.take(1) ?: "-"
+                get(x, y)?.owner?.hashCode()?.toString()?.take(2) ?: "--"
 
             }.joinToString(separator = " ")
         }.joinToString(separator = "\n")
