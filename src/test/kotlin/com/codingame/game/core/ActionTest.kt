@@ -29,6 +29,9 @@ class ActionTest : FeatureSpec({
 
                 result.isSuccess shouldBe true
                 result.get() shouldBe expectedAction
+
+                val resultUpperCase = Action.tryParse(playerOutput.toUpperCase())
+                resultUpperCase.isSuccess shouldBe true
             }
         }
 

@@ -21,7 +21,7 @@ sealed class Action {
             val tokens = userOutput.split(" ")
             val majorKeyword = tokens.first()
 
-            when (majorKeyword) {
+            when (majorKeyword.toLowerCase()) {
                 "move" ->
                     Move( parseDirection(tokens[1]), parseDebugMsg(tokens.drop(2)) )
 
@@ -39,7 +39,7 @@ sealed class Action {
             }
         }
 
-        private fun parseDirection(raw: String): Direction = when (raw) {
+        private fun parseDirection(raw: String): Direction = when (raw.toLowerCase()) {
             "up"    -> UP
             "down"  -> DOWN
             "left"  -> LEFT
