@@ -1,12 +1,13 @@
 package com.codingame.game
 
 import com.codingame.game.core.*
+import kotlin.random.Random
 
 internal object InputGenerator {
-    internal fun generateInputFor(player: Player, arena: Arena, visionRange: Int = Config.Robots.VISION_RANGE): Pair<List<Robot>, String> {
+    internal fun generateInputFor(player: Player, arena: Arena, rng: Random, visionRange: Int = Config.Robots.VISION_RANGE): Pair<List<Robot>, String> {
         val robots = arena
             .getAllRobotsOwnedBy(player)
-            .shuffled()
+            .shuffled(rng)
 
         return Pair(
             robots.map { (robot, _) -> robot },

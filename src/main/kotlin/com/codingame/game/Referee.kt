@@ -2,13 +2,13 @@ package com.codingame.game
 
 import com.codingame.game.core.Arena
 import com.codingame.game.core.Interpreter
-import com.codingame.game.core.Position
 import com.codingame.game.core.Robot
 import com.codingame.game.util.Symmetry
 import com.codingame.gameengine.core.AbstractReferee
 import com.codingame.gameengine.core.MultiplayerGameManager
 import com.codingame.gameengine.module.entities.GraphicEntityModule
 import com.google.inject.Inject
+import kotlin.random.Random
 
 class Referee : AbstractReferee() {
     @Inject private lateinit var gameManager: MultiplayerGameManager<Player>
@@ -18,7 +18,10 @@ class Referee : AbstractReferee() {
     private lateinit var arena: Arena
     private lateinit var interpreter: Interpreter
 
+    private lateinit var rng: Random
+
     override fun init() {
+        rng = Random(gameManager.seed)
         arena = loadArena()
 //        presenter = Presenter(arena, graphicEntityModule)
 //        interpreter = Interpreter(arena, presenter)
@@ -37,13 +40,13 @@ class Referee : AbstractReferee() {
 
         fun attemptToAssignSymmetricalPositions(): Boolean {
             for (attempt in 1..Config.Referee.SPAWN_ATTEMPTS_LIMIT) {
-                val randomEmptyPos = emptyPositions.random()
+                val randomEmptyPos = emptyPositions.random(rng)
                 val symmetricalPos = Symmetry.centerSymmetry(center = Config.Referee.SPAWN_SYMMETRY_CENTER, a = randomEmptyPos)
                     .normalizeOverflow(arena.width, arena.height)
 
                 val complementPos1 = randomEmptyPos.allNeighborsInRange(Config.Referee.SPAWN_COMPLEMENT_RANGE)
                         .flatten()
-                        .shuffled()
+                        .shuffled(rng)
                         .firstOrNull()
                         ?.normalizeOverflow(arena.width, arena.height) ?: continue
 
