@@ -3,7 +3,7 @@ package com.codingame.game.util
 import com.codingame.game.core.Position
 
 class MoveGraph {
-    private class Vertex(val incomingEdges: MutableList<Position> = mutableListOf(), var counter: Int = 0)
+    private class Vertex(val incomingEdges: MutableSet<Position> = mutableSetOf(), var counter: Int = 0)
 
     private val pos2vertex = mutableMapOf<Position, Vertex>()
 
@@ -48,6 +48,17 @@ class MoveGraph {
         }
     }
 
-    fun isCollisionAt(destination: Position): Boolean =
-        pos2vertex[destination]!!.counter > 1
+    fun checkCollision(departure: Position, destination: Position): Boolean {
+        val depVertex = pos2vertex.getOrPut(
+            key = departure,
+            defaultValue = { Vertex() }
+        )
+
+        val destVertex = pos2vertex.getOrPut(
+            key = destination,
+            defaultValue = { Vertex() }
+        )
+
+        return destVertex.counter > 1 || depVertex.incomingEdges.contains(destination)
+    }
 }

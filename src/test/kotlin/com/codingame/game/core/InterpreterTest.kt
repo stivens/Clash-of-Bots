@@ -162,6 +162,33 @@ class InterpreterTest : ShouldSpec({
             robot4.health shouldBeLessThan 100
         }
 
+        should("detect and properly handle collisions when two robots are going to swap places") {
+            val arena = Arena(width = 12, height = 12)
+            val interpreter = Interpreter(arena, presenter = null)
+
+            val robot1 = Robot(owner = Player(), health = 100)
+            val robot2 = Robot(owner = Player(), health = 100)
+
+            val actions = mapOf(
+                robot1 to Move(RIGHT),
+                robot2 to Move(LEFT),
+            )
+
+            val pos1 = Position(x = 5, y = 0)
+            val pos2 = Position(x = 6, y = 0)
+
+            arena.emplace(robot1, pos1)
+            arena.emplace(robot2, pos2)
+
+            interpreter.execute(actions)
+
+            arena.getPositionOf(robot1) shouldBe pos1
+            arena.getPositionOf(robot2) shouldBe pos2
+
+            robot1.health shouldBeLessThan 100 - Config.Robots.COLLISION_DAMAGE
+            robot2.health shouldBeLessThan 100 - Config.Robots.COLLISION_DAMAGE
+        }
+
         should("properly handle guards") {
             val arena = Arena(width = 12, height = 12)
             val interpreter = Interpreter(arena, presenter = null)
