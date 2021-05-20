@@ -20,10 +20,10 @@ class InterpreterTest : ShouldSpec({
             val robot2 = Robot(owner = Player(), health = 100)
             val robot3 = Robot(owner = Player(), health = 100)
 
-            val actions = listOf(
-                Pair(robot1, Move(UP)),
-                Pair(robot2, Move(RIGHT)),
-                Pair(robot3, Move(RIGHT)),
+            val actions = mapOf(
+                robot1 to Move(UP),
+                robot2 to Move(RIGHT),
+                robot3 to Move(RIGHT),
             )
 
             val pos1 = Position(x = 5, y = 5)
@@ -58,9 +58,9 @@ class InterpreterTest : ShouldSpec({
             arena.emplace(robot1, pos1)
             arena.emplace(robot2, pos2)
 
-            val actions = listOf(
-                Pair(robot1, Attack(RIGHT)),
-                Pair(robot2, Attack(LEFT)),
+            val actions = mapOf(
+                robot1 to Attack(RIGHT),
+                robot2 to Attack(LEFT),
             )
 
             interpreter.execute(actions)
@@ -76,9 +76,9 @@ class InterpreterTest : ShouldSpec({
             val robot1 = Robot(owner = Player(), health = 100)
             val robot2 = Robot(owner = Player(), health = 100)
 
-            val actions = listOf(
-                Pair(robot1, Move(RIGHT)),
-                Pair(robot2, Move(LEFT)),
+            val actions = mapOf(
+                robot1 to Move(RIGHT),
+                robot2 to Move(LEFT),
             )
 
             val pos1 = Position(x = 5, y = 0)
@@ -103,9 +103,9 @@ class InterpreterTest : ShouldSpec({
             val robot1 = Robot(owner = Player(), health = 100)
             val robot2 = Robot(owner = Player(), health = 100)
 
-            val actions = listOf(
-                Pair(robot1, Move(RIGHT)),
-                Pair(robot2, Attack(RIGHT)),
+            val actions = mapOf(
+                robot1 to Move(RIGHT),
+                robot2 to Attack(RIGHT),
             )
 
             val pos1 = Position(x = 5, y = 0)
@@ -132,11 +132,11 @@ class InterpreterTest : ShouldSpec({
             val robot3 = Robot(owner = Player(), health = 100)
             val robot4 = Robot(owner = Player(), health = 100)
 
-            val actions = listOf(
-                Pair(robot1, Move(RIGHT)),
-                Pair(robot2, Move(RIGHT)),
-                Pair(robot3, Move(RIGHT)),
-                Pair(robot4, Attack(RIGHT)),
+            val actions = mapOf(
+                robot1 to Move(RIGHT),
+                robot2 to Move(RIGHT),
+                robot3 to Move(RIGHT),
+                robot4 to Attack(RIGHT),
             )
 
             val pos1 = Position(x = 5, y = 0)
@@ -169,13 +169,13 @@ class InterpreterTest : ShouldSpec({
             val robot = Robot(owner = Player())
             arena.emplace(robot, Position(0, 0))
 
-            val activateGuard = listOf(Pair(robot, Guard()))
+            val activateGuard = mapOf(robot to Guard())
 
             robot.guardUp shouldBe false
             interpreter.execute(activateGuard)
             robot.guardUp shouldBe true
 
-            val someOtherAction = listOf(Pair(robot, Move(UP)))
+            val someOtherAction = mapOf(robot to Move(UP))
 
             interpreter.execute(someOtherAction)
             robot.guardUp shouldBe false
@@ -194,10 +194,10 @@ class InterpreterTest : ShouldSpec({
             arena.emplace(robotGuard, posGuard)
             arena.emplace(robotAttack, posAttack)
 
-            val actions = listOf(
-                Pair(robotGuard, Guard()),
-                Pair(robotAttack, Attack(LEFT)),
-            ).shuffled()
+            val actions = mapOf(
+                robotGuard to Guard(),
+                robotAttack to Attack(LEFT),
+            )
 
             interpreter.execute(actions)
 
@@ -231,8 +231,8 @@ class InterpreterTest : ShouldSpec({
             require(inRange.isNotEmpty())
             require(notInRange.isNotEmpty())
 
-            val actions = listOf(
-                Pair(aboutToExplode, Selfdestruction())
+            val actions = mapOf(
+                aboutToExplode to Selfdestruction()
             )
 
             interpreter.execute(actions)
@@ -259,10 +259,10 @@ class InterpreterTest : ShouldSpec({
             arena.emplace(aboutToExplode, Position(0, 0))
             arena.emplace(robotAttack, Position(x = 0, y = 1))
 
-            val actions = listOf(
-                Pair(aboutToExplode, Selfdestruction()),
-                Pair(robotAttack, Attack(UP))
-            ).shuffled()
+            val actions = mapOf(
+                aboutToExplode to Selfdestruction(),
+                robotAttack to Attack(UP)
+            )
 
             interpreter.execute(actions)
 
@@ -279,10 +279,10 @@ class InterpreterTest : ShouldSpec({
             arena.emplace(aboutToRunAway, Position(0, 0))
             arena.emplace(robotAttack, Position(x = 0, y = 1))
 
-            val actions = listOf(
-                Pair(aboutToRunAway, Move(UP)),
-                Pair(robotAttack, Attack(UP))
-            ).shuffled()
+            val actions = mapOf(
+                aboutToRunAway to Move(UP),
+                robotAttack to Attack(UP)
+            )
 
             interpreter.execute(actions)
 

@@ -4,32 +4,32 @@ import com.codingame.game.Config
 import com.codingame.game.Presenter
 import com.codingame.game.core.Action.*
 import com.codingame.game.util.MoveGraph
-import com.codingame.game.util.direction2vector
+import com.codingame.game.util.asVector
 
 class Interpreter(private val arena: Arena, private val presenter: Presenter?) {
     private val orderOfPrecedence = listOf(Guard::class, Move::class, Attack::class, Selfdestruction::class)
         .sortedBy { Config.Interpreter.ACTION_PRIORITY[it] }
 
-    fun execute(robotActions: List<Pair<Robot, Action>>) {
+    fun execute(robotActions: Map<Robot, Action>) {
         disableAllGuards()
 
         for (actionClass in orderOfPrecedence) {
             when (actionClass) {
                 Guard::class -> executeGuards(
                     robotActions.filter { (_, action) -> action::class == Guard::class }
-                        .let { discardCanceledActions(it) } as List<Pair<Robot, Guard>>
+                        .let(::discardCanceledActions) as Map<Robot, Guard>
                 )
                 Move::class -> executeMoves(
                     robotActions
-                        .let { discardCanceledActions(it) }
+                        .let(::discardCanceledActions)
                 )
                 Attack::class -> executeAttacks(
                     robotActions.filter { (_, action) -> action::class == Attack::class }
-                        .let { discardCanceledActions(it) } as List<Pair<Robot, Attack>>
+                        .let(::discardCanceledActions) as Map<Robot, Attack>
                 )
                 Selfdestruction::class -> executeSelfdestructions(
                     robotActions.filter { (_, action) -> action::class == Selfdestruction::class }
-                        .let { discardCanceledActions(it) } as List<Pair<Robot, Selfdestruction>>
+                        .let(::discardCanceledActions) as Map<Robot, Selfdestruction>
                 )
             }
 
@@ -37,19 +37,19 @@ class Interpreter(private val arena: Arena, private val presenter: Presenter?) {
         }
     }
 
-    private fun executeGuards(robotActions: List<Pair<Robot, Guard>>) {
+    private fun executeGuards(robotActions: Map<Robot, Guard>) {
         robotActions.forEach { (robot, guard) ->
             robot.guardUp = true
             presenter?.triggerGuard(robot, guard)
         }
     }
 
-    private fun executeMoves(robotActions: List<Pair<Robot, Action>>) {
+    private fun executeMoves(robotActions: Map<Robot, Action>) {
         fun getDepartureAndDestination(robot: Robot, move: Move): Pair<Position, Position> {
             val departure = arena.getPositionOf(robot)
             require(departure != null)
 
-            val destination = departure.apply(direction2vector(move.direction))
+            val destination = departure.apply(move.direction.asVector())
                 .normalizeOverflow(arena.width, arena.height)
 
             return Pair(departure, destination)
@@ -69,12 +69,12 @@ class Interpreter(private val arena: Arena, private val presenter: Presenter?) {
 
         moveGraph.resolve()
 
-        val moves = robotActions.filter { (_, action) -> action::class == Move::class } as List<Pair<Robot, Move>>
+        val moves = robotActions.filter { (_, action) -> action::class == Move::class } as Map<Robot, Move>
 
         moves.forEach { (robot, move) ->
-            val (_, destination) = getDepartureAndDestination(robot, move)
+            val (departure, destination) = getDepartureAndDestination(robot, move)
 
-            if (moveGraph.isCollisionAt(destination)) {
+            if (moveGraph.checkCollision(departure, destination)) {
                 listOf(robot, arena.get(destination)).filterNotNull().forEach { r ->
                     damageRobot(r, Config.Robots.COLLISION_DAMAGE)
                     presenter?.triggerCollision(r, move)
@@ -86,18 +86,18 @@ class Interpreter(private val arena: Arena, private val presenter: Presenter?) {
         }
     }
 
-    private fun executeAttacks(robotActions: List<Pair<Robot, Attack>>) {
+    private fun executeAttacks(robotActions: Map<Robot, Attack>) {
         robotActions.forEach { (robot, attack) ->
             val robotPosition = arena.getPositionOf(robot)
             require(robotPosition != null)
-            val targetPosition = robotPosition.apply(direction2vector(attack.direction))
+            val targetPosition = robotPosition.apply(attack.direction.asVector())
 
             arena.get(targetPosition)?.let {damageRobot(it, Config.Robots.ATTACK_DAMAGE) }
             presenter?.triggerAttack(robot, attack)
         }
     }
 
-    private fun executeSelfdestructions(robotActions: List<Pair<Robot, Selfdestruction>>) {
+    private fun executeSelfdestructions(robotActions: Map<Robot, Selfdestruction>) {
         robotActions.forEach { (robot, selfdestruction) ->
 
             val position = arena.getPositionOf(robot)
@@ -141,6 +141,6 @@ class Interpreter(private val arena: Arena, private val presenter: Presenter?) {
             }
     }
 
-    private fun discardCanceledActions(robotActions: List<Pair<Robot, Action>>): List<Pair<Robot, Action>> =
+    private fun discardCanceledActions(robotActions: Map<Robot, Action>): Map<Robot, Action> =
         robotActions.filter { (robot, _) -> robot.isAlive }
 }
