@@ -31,16 +31,16 @@ class InputGeneratorTest : ShouldSpec({
             val (_, player1input) = InputGenerator.generateInputFor(player1, arena, rng)
             val (_, player2input) = InputGenerator.generateInputFor(player2, arena, rng)
 
-            player1input.split("\n")[1] shouldBe "nrobots: ${player1robots.size}"
-            player2input.split("\n")[1] shouldBe "nrobots: ${player2robots.size}"
+            player1input.split("\n")[1] shouldBe "${player1robots.size}"
+            player2input.split("\n")[1] shouldBe "${player2robots.size}"
         }
 
         should("return proper vision range") {
             val (_, input1) = InputGenerator.generateInputFor(player1, arena, rng, visionRange = 1)
             val (_, input2) = InputGenerator.generateInputFor(player1, arena, rng, visionRange = 3)
 
-            input1.split("\n").first() shouldBe "vision: 1"
-            input2.split("\n").first() shouldBe "vision: 3"
+            input1.split("\n").first() shouldBe "1"
+            input2.split("\n").first() shouldBe "3"
         }
 
         should("return proper minimap for given robot") {

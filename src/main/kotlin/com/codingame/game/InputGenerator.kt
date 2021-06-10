@@ -26,10 +26,10 @@ internal object InputGenerator {
                     val numberOfRobots = it.size
 
                     """
-                    |vision: $visionRange
-                    |nrobots: $numberOfRobots
+                    |$visionRange
+                    |$numberOfRobots
                     |   
-                    |${it.joinToString(separator = "\n\n")}
+                    |${it.joinToString(separator = "\n")}
                     """.trimMargin()
                 }
         )
