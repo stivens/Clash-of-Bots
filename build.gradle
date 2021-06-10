@@ -1,6 +1,7 @@
 plugins {
     id 'java'
-    id 'org.jetbrains.kotlin.jvm' version '1.4.31'
+    id 'org.jetbrains.kotlin.jvm' version '1.5.0'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.5.0'
 }
 
 group 'com.codingame'
@@ -20,6 +21,8 @@ dependencies {
     implementation 'com.codingame.gameengine:core:3.15.0'
     implementation 'com.codingame.gameengine:module-entities:3.15.0'
     implementation 'com.codingame.gameengine:runner:3.15.0'
+
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.1"
 
     compile "io.vavr:vavr:0.10.3"
     compile "io.vavr:vavr-kotlin:0.10.2"

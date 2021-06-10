@@ -2,6 +2,7 @@ package com.codingame.game.core
 
 import com.codingame.game.Player
 import com.codingame.game.util.Vector
+import kotlinx.serialization.Serializable
 
 class Arena (val width: Int, val height: Int) {
     private val board: Array<Array<Robot?>> = Array(height) { Array(width) { null } }
@@ -63,6 +64,7 @@ class Arena (val width: Int, val height: Int) {
         }.joinToString(separator = "\n")
 }
 
+@Serializable
 data class Position(val x: Int, val y: Int) {
     fun allNeighborsInRange(range: Int): List<List<Position>> =
         (y - range .. y + range).map { neighborY ->
