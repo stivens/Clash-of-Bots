@@ -75,10 +75,10 @@ class Interpreter(private val arena: Arena, private val presenter: Presenter?) {
             val (departure, destination) = getDepartureAndDestination(robot, move)
 
             if (moveGraph.checkCollision(departure, destination)) {
-                listOf(robot, arena.get(destination)).filterNotNull().forEach { r ->
+                listOfNotNull(robot, arena.get(destination)).forEach { r ->
                     damageRobot(r, Config.Robots.COLLISION_DAMAGE)
-                    presenter?.triggerCollision(r, move)
                 }
+                presenter?.triggerCollision(robot, move)
             } else {
                 arena.emplace(robot, destination)
                 presenter?.triggerMove(robot, move)
