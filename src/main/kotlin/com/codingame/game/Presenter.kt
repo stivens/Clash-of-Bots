@@ -52,9 +52,9 @@ class Presenter(private val arena: Arena, private val graphicEntityModule: Graph
         }
 
         // przydatne do testow jesli zaczynasz z jakimiś robotami
-        for(robot in robots) {
-            addRobot(robot.first)
-        }
+        //for(robot in robots) {
+          //  addRobot(robot.first)
+        //}
 
     }
 
@@ -133,6 +133,7 @@ class Presenter(private val arena: Arena, private val graphicEntityModule: Graph
         else {
             robotSprite.setY(robotPosition.y * fieldHight + 140, Curve.LINEAR)
                 .setX(robotPosition.x * fieldWidth + 140, Curve.LINEAR)
+            graphicEntityModule.commitWorldState(1.0)
         }
     }
 
