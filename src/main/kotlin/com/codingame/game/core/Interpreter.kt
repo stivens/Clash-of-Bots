@@ -11,6 +11,10 @@ class Interpreter(private val arena: Arena, private val presenter: Presenter?) {
         .sortedBy { Config.Interpreter.ACTION_PRIORITY[it] }
 
     fun execute(robotActions: Map<Robot, Action>) {
+        require(
+            robotActions.keys == arena.getAllRobots().map { (robot, _) -> robot}.toSet()
+        ) { "There must be a action for every single robot." }
+
         disableAllGuards()
 
         for (actionClass in orderOfPrecedence) {

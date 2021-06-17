@@ -260,12 +260,14 @@ class InterpreterTest : ShouldSpec({
 
             val actions = mapOf(
                 aboutToExplode to Selfdestruction()
-            )
+            ) + targets.map { (robot, _) ->
+                robot to Guard()
+            }
 
             interpreter.execute(actions)
 
             inRange.forAll { (robot, _) ->
-                robot.health shouldBe 100 - Config.Robots.EXPLOSION_DAMAGE
+                robot.health shouldBeLessThan 100
             }
 
             notInRange.forAll { (robot, _) ->
