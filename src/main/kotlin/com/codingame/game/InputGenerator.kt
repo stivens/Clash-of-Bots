@@ -1,38 +1,24 @@
 package com.codingame.game
 
 import com.codingame.game.core.*
-import kotlin.random.Random
 
 internal object InputGenerator {
-    internal fun generateInputFor(player: Player, arena: Arena, rng: Random, visionRange: Int = Config.Robots.VISION_RANGE): Pair<List<Robot>, String> {
-        val robots = arena
-            .getAllRobotsOwnedBy(player)
-            .shuffled(rng)
+    internal fun generateInputFor(robot: Robot, arena: Arena, visionRange: Int = Config.Robots.VISION_RANGE): String {
+        val position = arena.getPositionOf(robot)
 
-        return Pair(
-            robots.map { (robot, _) -> robot },
+        require(position != null) { "Robot must be present on the board." }
 
-            robots
-                .map { (_, position) -> position.allNeighborsInRange(visionRange) }
-                .map { rows ->
-                    rows.map { cols ->
-                        cols.map { pos ->
-                            translateToStringRepr(arena.get(pos), perspectiveOf = player)
-                        }
+        return position.allNeighborsInRange(visionRange)
+            .let { rows ->
+                rows.map { cols ->
+                    cols.map { pos ->
+                        translateToStringRepr(arena.get(pos), perspectiveOf = robot.owner)
                     }
                 }
-                .map { rows -> rows.joinToString(separator = "\n") { cols -> cols.joinToString(separator = " ") } }
-                .let {
-                    val numberOfRobots = it.size
-
-                    """
-                    |$visionRange
-                    |$numberOfRobots
-                    |   
-                    |${it.joinToString(separator = "\n")}
-                    """.trimMargin()
-                }
-        )
+            }
+            .let { rows ->
+                rows.joinToString(separator = "\n") { cols -> cols.joinToString(separator = " ") }
+            }
     }
 
 
