@@ -45,7 +45,7 @@ class Referee : AbstractReferee() {
         player1 = gameManager.getPlayer(0)
         player2 = gameManager.getPlayer(1)
 
-        arena = Arena(Config.Arena.WIDTH ,Config.Arena.HEIGHT)
+        arena = Arena(Config.Arena.WIDTH, Config.Arena.HEIGHT)
         presenter = Presenter(arena, player1, player2, graphicEntityModule, tooltipModule)
         interpreter = Interpreter(arena, presenter)
         rng = Random(gameManager.seed)
