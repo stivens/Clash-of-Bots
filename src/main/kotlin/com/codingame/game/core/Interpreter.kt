@@ -15,8 +15,7 @@ class Interpreter(private val arena: Arena, private val presenter: Presenter?) {
             robotActions.keys == arena.getAllRobots().map { (robot, _) -> robot}.toSet()
         ) { "There must be a action for every single robot." }
 
-        updatePreviousLocations(robotActions.keys.toList())
-        updateActions(robotActions)
+        presenter?.robotActions = robotActions
         presenter?.updateTooltips()
         disableAllGuards()
 
@@ -41,6 +40,7 @@ class Interpreter(private val arena: Arena, private val presenter: Presenter?) {
             }
 
             clearDeadRobots()
+            presenter?.updateTooltips()
         }
     }
 
@@ -52,8 +52,12 @@ class Interpreter(private val arena: Arena, private val presenter: Presenter?) {
     }
 
     private fun executeMoves(robotActions: Map<Robot, Action>) {
+        val initialPositions = robotActions.keys.map { robot ->
+            robot to arena.getPositionOf(robot)
+        }.toMap()
+
         fun getDepartureAndDestination(robot: Robot, move: Move): Pair<Position, Position> {
-            val departure = robot.prevPos
+            val departure = initialPositions[robot]
             require(departure != null)
 
             val destination = departure.apply(move.direction.asVector())
@@ -150,12 +154,4 @@ class Interpreter(private val arena: Arena, private val presenter: Presenter?) {
 
     private fun discardCanceledActions(robotActions: Map<Robot, Action>): Map<Robot, Action> =
         robotActions.filter { (robot, _) -> robot.isAlive }
-
-    private fun updatePreviousLocations(robots: List<Robot>) {
-        robots.forEach { it.prevPos = arena.getPositionOf(it) }
-    }
-
-    private fun updateActions(robotActions: Map<Robot, Action>) {
-        robotActions.forEach { (robot, action) -> robot.action = action }
-    }
 }

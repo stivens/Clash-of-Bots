@@ -1,6 +1,7 @@
 package com.codingame.game
 
 
+import com.codingame.game.core.Action
 import com.codingame.game.core.Action.*
 import com.codingame.game.core.Arena
 import com.codingame.game.core.Robot
@@ -26,6 +27,7 @@ class Presenter(
     private val fieldWidth : Int = 1664 / arena.width
     private var playerRobotsNum : MutableMap<Player, Text> = mutableMapOf()
     private var playerHP : MutableMap<Player, Text> = mutableMapOf()
+    var robotActions: Map<Robot, Action> = mapOf()
 
     init {
         drawArena()
@@ -34,13 +36,8 @@ class Presenter(
     fun updateTooltips() {
         robotsGroups.forEach { (robot, group) ->
             val description = """
-                HP: ${robot.health}
-                GUARD: ${robot.guardUp}
-                OWNER: ${robot.owner.nicknameToken}
-                PREVIOUS  ${robot.prevPos}
-                CURRENT ${arena.getPositionOf(robot)}
-                
-                ${robot.action}
+                ${arena.getPositionOf(robot)}
+                ${robotActions[robot] ?: ""}
             """.trimIndent()
 
             tooltipModule.setTooltipText(group, description)
