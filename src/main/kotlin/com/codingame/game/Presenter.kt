@@ -46,12 +46,12 @@ class Presenter(
 
     private fun drawArena() {
         //graphicEntityModule.createSprite().image = Constants.BACKGROUND_SPRITE
-        graphicEntityModule.createSprite().setImage(Constants.FRAME).setZIndex(100)
+        graphicEntityModule.createSprite().setImage(Config.Presenter.FRAME_SPRITE).setZIndex(100)
 
 
         for (x in 0..arena.width - 1) {
             for(y in 0..arena.height - 1) {
-                graphicEntityModule.createSprite().setImage(Constants.BRICK_SPRITE)
+                graphicEntityModule.createSprite().setImage(Config.Presenter.FLOOR_SPRITE)
                     .setBaseHeight(fieldHight)
                     .setBaseWidth(fieldWidth)
                     .setX(x * fieldWidth + fieldWidth/2 + 129)
@@ -69,21 +69,21 @@ class Presenter(
             .setX(300)
             .setY(10)
             .setZIndex(101)
-            .setFillColor(Constants.COLOR_BLUE)
+            .setFillColor(Config.Presenter.COLOR_BLUE)
             .setFontSize(40)
 
         playerRobotsNum.put(player1, graphicEntityModule.createText("Robots: " + arena.getAllRobotsOwnedBy(player1).count().toString())
             .setX(350)
             .setY(60)
             .setZIndex(101)
-            .setFillColor(Constants.COLOR_BLUE)
+            .setFillColor(Config.Presenter.COLOR_BLUE)
             .setFontSize(50))
 
         playerHP.put(player1, graphicEntityModule.createText("HP: " + countHP(player1))
             .setX(600)
             .setY(60)
             .setZIndex(101)
-            .setFillColor(Constants.COLOR_BLUE)
+            .setFillColor(Config.Presenter.COLOR_BLUE)
             .setFontSize(50))
 
 
@@ -96,21 +96,21 @@ class Presenter(
             .setX(1400)
             .setY(10)
             .setZIndex(101)
-            .setFillColor(Constants.COLOR_RED)
+            .setFillColor(Config.Presenter.COLOR_RED)
             .setFontSize(40)
 
         playerRobotsNum.put(player2, graphicEntityModule.createText("Robots: " + arena.getAllRobotsOwnedBy(player2).count().toString())
             .setX(1450)
             .setY(60)
             .setZIndex(101)
-            .setFillColor(Constants.COLOR_RED)
+            .setFillColor(Config.Presenter.COLOR_RED)
             .setFontSize(50))
 
         playerHP.put(player2, graphicEntityModule.createText("HP: " + countHP(player2))
             .setX(1700)
             .setY(60)
             .setZIndex(101)
-            .setFillColor(Constants.COLOR_RED)
+            .setFillColor(Config.Presenter.COLOR_RED)
             .setFontSize(50))
     }
 
@@ -244,7 +244,7 @@ class Presenter(
     fun triggerAttack(robot: Robot, attack: Attack) {
         val robotPosition = arena.getPositionOf(robot) !!
         val robotFist = graphicEntityModule.createSprite()
-            .setImage(Constants.ROBOT_FIST)
+            .setImage(Config.Presenter.FIST_SPRITE)
             .setAnchor(-0.1)
             .setZIndex(3)
             .setScale(0.1)
@@ -339,7 +339,7 @@ class Presenter(
         robotsHP.replace(robot, robotHP)
 
         val robotShield = graphicEntityModule.createSprite()
-            .setImage(Constants.ROBOT_SHIELD)
+            .setImage(Config.Presenter.SHIELD_SPRITE)
             .setAnchor(.5)
             .setZIndex(2)
             .setScale(0.1)
@@ -348,7 +348,7 @@ class Presenter(
         robotsShields.replace(robot, robotShield)
 
         val robotFist = graphicEntityModule.createSprite()
-            .setImage(Constants.ROBOT_FIST)
+            .setImage(Config.Presenter.FIST_SPRITE)
             .setAnchor(.5)
             .setZIndex(3)
             .setScale(0.1)
@@ -369,11 +369,11 @@ class Presenter(
             .setZIndex(1)
         if(robot.owner.index == 0)
         {
-            robotSprite.setFillColor(Constants.COLOR_BLUE)
+            robotSprite.setFillColor(Config.Presenter.COLOR_BLUE)
         }
         else if(robot.owner.index == 1)
         {
-            robotSprite.setFillColor(Constants.COLOR_RED)
+            robotSprite.setFillColor(Config.Presenter.COLOR_RED)
         }
 
         val robotPosition = arena.getPositionOf(robot)
@@ -387,7 +387,7 @@ class Presenter(
         robotsHP.put(robot, robotHP)
 
         val robotShield = graphicEntityModule.createSprite()
-            .setImage(Constants.ROBOT_SHIELD)
+            .setImage(Config.Presenter.SHIELD_SPRITE)
             .setAnchor(.5)
             .setZIndex(2)
             .setScale(0.1)
@@ -396,7 +396,7 @@ class Presenter(
         robotsShields.put(robot, robotShield)
 
         val robotFist = graphicEntityModule.createSprite()
-            .setImage(Constants.ROBOT_FIST)
+            .setImage(Config.Presenter.FIST_SPRITE)
             .setAnchor(-0.1)
             .setZIndex(3)
             .setScale(0.1)
