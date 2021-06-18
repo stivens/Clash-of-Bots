@@ -7,7 +7,7 @@ import io.kotest.core.spec.style.ShouldSpec
 import io.kotest.matchers.shouldBe
 
 class InputGeneratorTest : ShouldSpec({
-    context("generateInputFor") {
+    context("::minimapFor") {
         val arena = Arena(width = 12, height = 12)
 
         val player1 = Player()
@@ -29,25 +29,25 @@ class InputGeneratorTest : ShouldSpec({
         ).forEach { (robot, position) -> arena.emplace(robot, position) }
 
         should("return proper minimap for given robot") {
-            InputGenerator.generateInputFor(robot1, arena, visionRange = 1) shouldBe """
+            InputGenerator.minimapFor(robot1, arena, visionRange = 1) shouldBe """
                 0 0 0
                 0 100 0
                 0 -100 0
             """.trimIndent()
 
-            InputGenerator.generateInputFor(robot2, arena, visionRange = 1) shouldBe """
+            InputGenerator.minimapFor(robot2, arena, visionRange = 1) shouldBe """
                 0 0 0
                 0 100 0
                 0 0 0
             """.trimIndent()
 
-            InputGenerator.generateInputFor(robot3, arena, visionRange = 1) shouldBe """
+            InputGenerator.minimapFor(robot3, arena, visionRange = 1) shouldBe """
                 0 0 0
                 0 50 0
                 0 0 0
             """.trimIndent()
 
-            InputGenerator.generateInputFor(robot4, arena, visionRange = 3) shouldBe """
+            InputGenerator.minimapFor(robot4, arena, visionRange = 3) shouldBe """
                 0 0 0 0 0 0 0
                 0 0 0 0 0 0 0
                 0 0 0 -100 0 0 0
@@ -57,7 +57,7 @@ class InputGeneratorTest : ShouldSpec({
                 0 0 0 0 0 0 0
             """.trimIndent()
 
-            InputGenerator.generateInputFor(robot5, arena, visionRange = 3) shouldBe """
+            InputGenerator.minimapFor(robot5, arena, visionRange = 3) shouldBe """
                 0 0 0 0 0 0 0
                 0 0 0 0 0 0 0
                 0 0 0 0 0 0 0

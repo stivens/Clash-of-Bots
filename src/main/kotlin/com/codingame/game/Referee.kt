@@ -122,7 +122,7 @@ class Referee : AbstractReferee() {
         player.sendInputLine("${robots.size}")
 
         robots.forEach { robot ->
-            InputGenerator.generateInputFor(robot, arena)
+            InputGenerator.minimapFor(robot, arena)
                 .split("\n")
                 .forEach(player::sendInputLine)
         }
