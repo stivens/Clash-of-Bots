@@ -1,13 +1,12 @@
 package com.codingame.game.util
 
 import com.codingame.game.core.Position
+import java.lang.IllegalStateException
 
 class MoveGraph {
-    private class Vertex(val incomingEdges: MutableSet<Position> = mutableSetOf(), var counter: Int = 0)
-
-    private val pos2vertex = mutableMapOf<Position, Vertex>()
-
     fun registerPositionOccupancy(position: Position) {
+        checkConsistency()
+
         pos2vertex.getOrPut(
             key = position,
             defaultValue = { Vertex() }
@@ -15,6 +14,8 @@ class MoveGraph {
     }
 
     fun registerMoveAttempt(from: Position, to: Position) {
+        checkConsistency()
+
         pos2vertex.getOrPut(
             key = to,
             defaultValue = { Vertex() }
@@ -25,6 +26,8 @@ class MoveGraph {
     }
 
     fun resolve() {
+        checkConsistency()
+
         val q = ArrayDeque<Position>()
 
         pos2vertex.forEach { (_, vertex) ->
@@ -46,6 +49,8 @@ class MoveGraph {
                 }
             }
         }
+
+        alreadyResolved = true
     }
 
     fun checkCollision(departure: Position, destination: Position): Boolean {
@@ -60,5 +65,18 @@ class MoveGraph {
         )
 
         return destVertex.counter > 1 || depVertex.incomingEdges.contains(destination)
+    }
+
+
+    private class Vertex(val incomingEdges: MutableSet<Position> = mutableSetOf(), var counter: Int = 0)
+
+    private val pos2vertex = mutableMapOf<Position, Vertex>()
+
+    private var alreadyResolved = false
+
+    private fun checkConsistency() {
+        if (alreadyResolved) {
+            throw IllegalStateException("MoveGraph cannot be updated after resolution.")
+        }
     }
 }
