@@ -37,9 +37,9 @@ class Referee : AbstractReferee() {
     override fun init() {
         gameManager.apply {
             firstTurnMaxTime = Config.Referee.FIRST_TURN_MAX_TIME
-            turnMaxTime = Config.Referee.TURN_MAX_TIME
-            frameDuration = Config.Referee.FRAME_DURATION
-            maxTurns = Config.Referee.MAX_TURNS
+                 turnMaxTime = Config.Referee.TURN_MAX_TIME
+               frameDuration = Config.Referee.FRAME_DURATION
+                    maxTurns = Config.Referee.MAX_TURNS
         }
 
         player1 = gameManager.getPlayer(0)
@@ -54,14 +54,19 @@ class Referee : AbstractReferee() {
         initialSpawnPoints.spawn(arena, player1, player2, presenter)
     }
 
+
+
+
+
+
     override fun gameTurn(turn: Int) {
-        if (turn % Config.Referee.SPAWN_TURN_DELAY == 0) {
+        if (shouldSpawnNewRobots(turn)) {
             pickSpawnPoints()?.spawn(arena, player1, player2, presenter)
         }
 
         performPlayersIO()
 
-        if (isGameover() || turn > Config.Referee.MAX_TURNS) {
+        if (isGameover()) {
             gameManager.endGame()
         }
 
@@ -71,17 +76,26 @@ class Referee : AbstractReferee() {
         interpreter.execute(player1Actions + player2Actions)
     }
 
+    private fun shouldSpawnNewRobots(turn: Int) = turn % Config.Referee.SPAWN_TURN_DELAY == 0
+    private fun isGameover() = gameManager.activePlayers.size < 2
+
     override fun onEnd() {
         gameManager.activePlayers.forEach { player ->
             val robots = arena.getAllRobotsOwnedBy(player).map { (robot, _) -> robot }
             player.score = robots.size
-            player.bonusScore = robots.map { r -> r.health }.sum()
+            player.bonusScore = robots.map { it.health }.sum()
         }
+
         val scores = gameManager.players.map { it.score * 100000 + it.bonusScore }.toIntArray()
         val summaries = gameManager.players.map { it.getScoreSummary() }.toTypedArray()
 
         endScreenModule.setScores(scores, summaries)
     }
+
+
+
+
+
 
     private fun performPlayersIO() {
         val players = listOf(player1, player2)
@@ -92,11 +106,8 @@ class Referee : AbstractReferee() {
             try {
                 parseOutputs(player)
             }
-            catch (timeout: AbstractPlayer.TimeoutException) {
-                disqualify(player, timeout.message!!)
-            }
-            catch (invalidAction: IllegalArgumentException) {
-                disqualify(player, invalidAction.message!!)
+            catch (e: Exception) {
+                disqualify(player, e.message ?: "")
             }
         }
     }
@@ -135,10 +146,16 @@ class Referee : AbstractReferee() {
         )
     }
 
-    private fun isGameover() = gameManager.activePlayers.size < 2
+
+
+
+
 
     @Serializable
-    private data class SpawnPoints(val forPlayer1: Set<Position>, val forPlayer2: Set<Position>) {
+    private data class SpawnPoints(
+        val forPlayer1: Set<Position>,
+        val forPlayer2: Set<Position>
+    ) {
         fun spawn(arena: Arena, player1: Player, player2: Player, presenter: Presenter?) {
             forPlayer1.spawn(arena, player1, presenter)
             forPlayer2.spawn(arena, player2, presenter)
@@ -157,37 +174,33 @@ class Referee : AbstractReferee() {
         val emptyPositions = arena.getEmptyPositions().minus(Config.Referee.SPAWN_SYMMETRY_CENTER)
         if (emptyPositions.size < 4) return null
 
-        fun attemptToPickSymmetricalPositions(): SpawnPoints? {
-            for (attempt in 1..Config.Referee.SPAWN_ATTEMPTS_LIMIT) {
-                val randomEmptyPos = emptyPositions.random(rng)
-                val symmetricalPos = Symmetry.centerSymmetry(center = Config.Referee.SPAWN_SYMMETRY_CENTER, a = randomEmptyPos)
+        for (attempt in 1..Config.Referee.SPAWN_ATTEMPTS_LIMIT) {
+            val randomEmptyPos = emptyPositions.random(rng)
+            val symmetricalPos = Symmetry.centerSymmetry(center = Config.Referee.SPAWN_SYMMETRY_CENTER, a = randomEmptyPos)
+                .normalizeOverflow(arena.width, arena.height)
+
+            val complementPos1 = randomEmptyPos.allNeighborsInRange(Config.Referee.SPAWN_COMPLEMENT_RANGE)
+                .flatten()
+                .shuffled(rng)
+                .firstOrNull()
+                ?.normalizeOverflow(arena.width, arena.height) ?: continue
+
+            val complementPos2 =
+                Symmetry.centerSymmetry(center = Config.Referee.SPAWN_SYMMETRY_CENTER, a = complementPos1)
                     .normalizeOverflow(arena.width, arena.height)
 
-                val complementPos1 = randomEmptyPos.allNeighborsInRange(Config.Referee.SPAWN_COMPLEMENT_RANGE)
-                    .flatten()
-                    .shuffled(rng)
-                    .firstOrNull()
-                    ?.normalizeOverflow(arena.width, arena.height) ?: continue
+            val positions = listOf(randomEmptyPos, symmetricalPos, complementPos1, complementPos2)
 
-                val complementPos2 =
-                    Symmetry.centerSymmetry(center = Config.Referee.SPAWN_SYMMETRY_CENTER, a = complementPos1)
-                        .normalizeOverflow(arena.width, arena.height)
+            if (positions.distinct() != positions || !positions.all { emptyPositions.contains(it) })
+                continue
 
-                val positions = listOf(randomEmptyPos, symmetricalPos, complementPos1, complementPos2)
-
-                if (positions.distinct() != positions || !positions.all { emptyPositions.contains(it) })
-                    continue
-
-                return SpawnPoints(
-                    forPlayer1 = setOf(randomEmptyPos, complementPos2),
-                    forPlayer2 = setOf(symmetricalPos, complementPos1)
-                )
-            }
-
-            return null
+            return SpawnPoints(
+                forPlayer1 = setOf(randomEmptyPos, complementPos2),
+                forPlayer2 = setOf(symmetricalPos, complementPos1)
+            )
         }
 
-        return attemptToPickSymmetricalPositions()
+        return null
     }
 
     private fun loadInitialSpawnPoints(): SpawnPoints {
