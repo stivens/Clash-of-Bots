@@ -17,6 +17,7 @@ class Interpreter(private val arena: Arena, private val presenter: Presenter?) {
 
         updatePreviousLocations(robotActions.keys.toList())
         updateActions(robotActions)
+        presenter?.updateTooltips()
         disableAllGuards()
 
         for (actionClass in orderOfPrecedence) {
@@ -40,7 +41,6 @@ class Interpreter(private val arena: Arena, private val presenter: Presenter?) {
             }
 
             clearDeadRobots()
-            presenter?.updateTooltips()
         }
     }
 

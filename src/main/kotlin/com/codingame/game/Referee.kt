@@ -61,7 +61,7 @@ class Referee : AbstractReferee() {
 
         performPlayersIO()
 
-        if (isGameover()) {
+        if (isGameover() || turn > Config.Referee.MAX_TURNS) {
             gameManager.endGame()
         }
 

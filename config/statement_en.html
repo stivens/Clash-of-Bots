@@ -1,0 +1,305 @@
+<!-- LEAGUES level1 level2 level3 level4 -->
+<div id="statement_back" class="statement_back" style="display: none"></div>
+<div class="statement-body">
+    <!-- GOAL -->
+    <div class="statement-section statement-goal">
+        <h2>
+            <span class="icon icon-goal">&nbsp;</span>
+            <span>Goal</span>
+        </h2>
+        <div style="margin-bottom: 10px" class="statement-goal-content">
+            <div>
+                End the game with more <b>alive robots</b> than your opponent.
+            </div>
+            <center style="margin: 20px">
+                <img src="https://cdn.pixabay.com/photo/2016/08/23/18/50/spider-1615195_960_720.png" style="margin-bottom: 5px; height: 400px;">
+            </center>
+        </div>
+        <div style="margin-bottom: 10px">
+            The game takes place in an arena, where robots fight.
+        </div>
+        Destroy your enemies.
+
+    </div>
+    <!-- RULES -->
+    <div class="statement-section statement-rules">
+        <h2>
+            <span class="icon icon-rules">&nbsp;</span>
+            <span>Rules</span>
+        </h2>
+
+        <div class="statement-rules-content">
+            <div style="margin-bottom: 10px">
+                Each player takes control over several <b>robots</b>. The game takes place on a rectangular grid representing the <b>arena</b>.
+            </div>
+            <div style="margin-bottom: 10px">
+                The game is played over several rounds. On each turn, robots perform actions simultaneously.
+            </div>
+            <h3 style="font-size: 14px;
+    font-weight: 700;
+    padding-top: 15px;
+    color: #838891;
+    padding-bottom: 15px;">
+                Arena</h3>
+
+            <div style="margin-bottom: 10px">
+                The arena is a rectangle of some size and it behaves like a torus.
+            </div>
+
+            <h3 style="font-size: 14px;
+      font-weight: 700;
+      padding-top: 15px;
+      color: #838891;
+      padding-bottom: 15px;">
+                Rounds</h3>
+
+            <div style="margin-bottom: 10px">
+                At the start of each round, players receive status about the surrounding area of each owned robot.<br>
+                Then, players take <b>action</b> for each owned robot.
+            </div>
+
+            <h3 style="font-size: 14px;
+    font-weight: 700;
+    padding-top: 15px;
+    color: #838891;
+    padding-bottom: 15px;">
+                Actions</h3>
+
+            <div style="margin-bottom: 10px">
+                The possible actions are:
+                <ul>
+                    <li>
+                        <action>GUARD</action>: Command a robot to raise a guard. It reduces taken damage by 50% for this turn. (*rounded down)
+                    </li>
+                    <li>
+                        <action>MOVE &lt;DIRECTION&gt;</action>: Command a robot to move in a given direction. If the move would cause a collision, it is canceled and involved robots are damaged.
+                    </li>
+                    <li>
+                        <action>ATTACK &lt;DIRECTION&gt;</action>: Command a robot to attack a neighbor cell.
+                    </li>
+                    <li>
+                        <action>SELFDESTRUCTION</action>: Command a robot to activate self-destruction and explode damaging neighbor cells.
+                    </li>
+                </ul>
+            </div>
+
+            <h3 style="font-size: 14px;
+    font-weight: 700;
+    padding-top: 15px;
+    color: #838891;
+    padding-bottom: 15px;">
+                Directions</h3>
+
+            <div style="margin-bottom: 10px">
+                The possible directions are:
+                <ul>
+                    <li>
+                        <action>UP</action>
+                    </li>
+                    <li>
+                        <action>DOWN</action>
+                    </li>
+                    <li>
+                        <action>LEFT</action>
+                    </li>
+                    <li>
+                        <action>RIGHT</action>
+                    </li>
+                </ul>
+            </div>
+
+            <h3 style="font-size: 14px;
+                      font-weight: 700;
+                      padding-top: 15px;
+                      color: #838891;
+                      padding-bottom: 15px;">
+                ⛔ Game end</h3>
+
+            <div style="margin-bottom: 10px">If players have the same number of alive robots, the winner is the player with the most summary health.</div>
+
+            <!-- Victory conditions -->
+            <div class="statement-victory-conditions">
+                <div class="icon victory"></div>
+                <div class="blk">
+                    <div class="title">Victory Conditions</div>
+                    <div class="text">
+                        <ul style="padding-top:0; padding-bottom: 0;">
+                            The winner is the player with the most <b>number of alive robots</b>.
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- Lose conditions -->
+            <div class="statement-lose-conditions">
+                <div class="icon lose"></div>
+                <div class="blk">
+                    <div class="title">Defeat Conditions</div>
+                    <div class="text">
+                        <ul style="padding-top:0; padding-bottom: 0;">
+                            Your program does not provide a command in the allotted time or it provides an unrecognized command.
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <h3 style="font-size: 14px;
+                      font-weight: 700;
+                      padding-top: 15px;
+    color: #838891;
+                      padding-bottom: 15px;">
+                🐞 Debugging tips</h3>
+            <ul>
+                <li>Hover over a robot to see extra information about it</li>
+                <li>Append text after any command and that text will appear next to robot</li>
+                <li>Use the keyboard to control the action: space to play/pause, arrows to step 1 frame at a time</li>
+            </ul>
+
+        </div>
+    </div>
+
+    <!-- EXPERT RULES -->
+    <div class="statement-section statement-expertrules">
+        <h2>
+            <span class="icon icon-expertrules">&nbsp;</span>
+            <span>Technical Details</span>
+        </h2>
+        <div class="statement-expert-rules-content">
+            <ul style="padding-left: 20px;padding-bottom: 0">
+                <li>Players start the game with two robots.</li>
+                <li>Every ? rounds new robots are spawned.</li>
+                <li>Ordering of robots in the input is randomized</li>
+                <li>
+                    You can check out the source code of this game <a rel="nofollow" target="_blank" href="https://github.com/stivens/Clash-of-Bots">on this GitHub repo</a>.
+                </li>
+            </ul>
+        </div>
+
+        <pre>
+            object Config {
+                object Robots {
+                    const val MAX_HEALTH: Int = 10
+                    const val ATTACK_DAMAGE: Int = 2
+                    const val COLLISION_DAMAGE: Int = 1
+                    const val EXPLOSION_DAMAGE: Int = 4
+                    const val EXPLOSION_RANGE: Int = 1
+                    const val GUARD_MODIFIER: Double = 0.5
+                    const val VISION_RANGE: Int = 1
+                }
+
+                object Arena {
+                    const val WIDTH: Int = 10
+                    const val HEIGHT: Int = 8
+                }
+
+                object Referee {
+                    const val MAX_TURNS: Int = 100
+                    const val FIRST_TURN_MAX_TIME = 1000
+                    const val TURN_MAX_TIME = 50
+                    const val FRAME_DURATION = 500
+
+                    val SPAWN_SYMMETRY_CENTER = Position(0, 0)
+                    const val SPAWN_TURN_DELAY: Int = 10
+                    const val SPAWN_ATTEMPTS_LIMIT: Int = 15
+                    const val SPAWN_COMPLEMENT_RANGE = 1
+                }
+
+                object Interpreter {
+                    val ACTION_PRIORITY = mapOf(
+                                  Guard::class to 0,
+                                   Move::class to 1,
+                                 Attack::class to 2,
+                        Selfdestruction::class to 3,
+                    )
+                }
+            }
+        </pre>
+    </div>
+
+    <!-- PROTOCOL -->
+    <div class="statement-section statement-protocol">
+        <h2>
+            <span class="icon icon-protocol">&nbsp;</span>
+            <span>Game Protocol</span>
+        </h2>
+
+        <!-- Protocol block -->
+        <div class="blk">
+            <div class="title">Input for One Game Turn</div>
+            <div class="text">
+
+                
+                <div class="statement-new-league-rule">
+                    <span class="statement-lineno">First line:</span> An integer <var>k</var>:
+                    the number of robots you currently own.<br>
+                    Followed by <var>k</var> minimaps.
+
+                    Minimap is a square of size <const>3x3</const> representing robot vision. <br><br>
+
+                    Example minimap:
+                    <pre>
+                        4 0 0
+                        0 10 0
+                        0 -10 0
+                    </pre>
+
+                    <const>0</const> - empty square <br>
+                    <const>n > 0</const> - ally robot with health equal n <br>
+                    <const>n < 0</const> - enemy robot with health equal n <br><br><br><hr>
+
+                    Example input:
+                    <pre>
+                        3
+                        0 0 0
+                        0 10 0
+                        0 -10 0
+                        0 0 0
+                        0 4 0
+                        0 0 0
+                        0 0 5
+                        0 10 0
+                        0 0 0
+                    </pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Protocol block -->
+        <div class="blk">
+            <div class="title">Output</div>
+            <div class="text">
+                k lines with your commands. <br>
+                k is the number of your robots. <br>
+                Line number i contains command for the i-th robot (relative to input ordering)
+
+                <div class="statement-new-league-rule">
+                    <ul style="padding-left: 20px;padding-top: 0">
+                        <li>
+                            <action>guard</action>: command your robot to raise the guard.
+                        </li>
+
+                        <li>
+                            <action>move [left|right|up|down]</action>: command your robot to move on given direction.
+                        </li>
+
+                        <li>
+                            <action>attack [left|right|up|down]</action>: command your robot to attack the cell that is [left|right|up|down] to him.
+                        </li>
+                        <li>
+
+                            <action>selfdestruction</action>: command your robot to activate self-destruction.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="blk">
+            <div class="title">Constraints</div>
+            <div class="text">
+                Response time per turn ≤ <const>50</const>ms
+                <br>Response time for the first turn ≤ <const>1000</const>ms
+            </div>
+        </div>
+    </div>
+
+</div>

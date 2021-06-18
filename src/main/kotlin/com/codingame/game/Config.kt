@@ -15,19 +15,19 @@ object Config {
     }
 
     object Arena {
-        const val WIDTH: Int = 10
-        const val HEIGHT: Int = 8
+        const val WIDTH: Int = 13
+        const val HEIGHT: Int = 13
     }
 
     object Referee {
-        const val MAX_TURNS: Int = 20
+        const val MAX_TURNS: Int = 100
         const val FIRST_TURN_MAX_TIME = 1000
         const val TURN_MAX_TIME = 50
         const val FRAME_DURATION = 500
 
         val SPAWN_SYMMETRY_CENTER = Position(0, 0)
-        const val SPAWN_TURN_DELAY: Int = 10
-        const val SPAWN_ATTEMPTS_LIMIT: Int = 15
+        const val SPAWN_TURN_DELAY: Int = 7
+        const val SPAWN_ATTEMPTS_LIMIT: Int = 5
         const val SPAWN_COMPLEMENT_RANGE = 1
     }
 

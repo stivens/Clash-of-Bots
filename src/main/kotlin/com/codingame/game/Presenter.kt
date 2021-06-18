@@ -72,21 +72,21 @@ class Presenter(
             .setX(300)
             .setY(10)
             .setZIndex(101)
-            .setFillColor(0x0000ff)
+            .setFillColor(Constants.COLOR_BLUE)
             .setFontSize(40)
 
         playerRobotsNum.put(player1, graphicEntityModule.createText("Robots: " + arena.getAllRobotsOwnedBy(player1).count().toString())
             .setX(350)
             .setY(60)
             .setZIndex(101)
-            .setFillColor(0x0000ff)
+            .setFillColor(Constants.COLOR_BLUE)
             .setFontSize(50))
 
         playerHP.put(player1, graphicEntityModule.createText("HP: " + countHP(player1))
             .setX(600)
             .setY(60)
             .setZIndex(101)
-            .setFillColor(0x0000ff)
+            .setFillColor(Constants.COLOR_BLUE)
             .setFontSize(50))
 
 
@@ -99,21 +99,21 @@ class Presenter(
             .setX(1400)
             .setY(10)
             .setZIndex(101)
-            .setFillColor(0xff0000)
+            .setFillColor(Constants.COLOR_RED)
             .setFontSize(40)
 
         playerRobotsNum.put(player2, graphicEntityModule.createText("Robots: " + arena.getAllRobotsOwnedBy(player2).count().toString())
             .setX(1450)
             .setY(60)
             .setZIndex(101)
-            .setFillColor(0xff0000)
+            .setFillColor(Constants.COLOR_RED)
             .setFontSize(50))
 
         playerHP.put(player2, graphicEntityModule.createText("HP: " + countHP(player2))
             .setX(1700)
             .setY(60)
             .setZIndex(101)
-            .setFillColor(0xff0000)
+            .setFillColor(Constants.COLOR_RED)
             .setFontSize(50))
     }
 
@@ -372,11 +372,11 @@ class Presenter(
             .setZIndex(1)
         if(robot.owner.index == 0)
         {
-            robotSprite.setFillColor(0x1a75ff)
+            robotSprite.setFillColor(Constants.COLOR_BLUE)
         }
         else if(robot.owner.index == 1)
         {
-            robotSprite.setFillColor(0xFF3333)
+            robotSprite.setFillColor(Constants.COLOR_RED)
         }
 
         val robotPosition = arena.getPositionOf(robot)

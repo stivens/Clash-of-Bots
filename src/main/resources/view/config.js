@@ -8,3 +8,5 @@ export const modules = [
 	TooltipModule,
 	EndScreenModule,
 ];
+
+export const playerColors = ['#1a75ff', '#FF3333'];
