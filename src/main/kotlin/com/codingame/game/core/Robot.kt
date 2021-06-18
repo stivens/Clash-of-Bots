@@ -12,6 +12,8 @@ class Robot(
 ) {
     val isAlive: Boolean get() = health > 0
     val isNotAlive: Boolean get() = !isAlive
+    var prevPos: Position? = null
+    var action: Action? = null
 
     override fun hashCode() = uuid.hashCode()
     override fun equals(other: Any?) =

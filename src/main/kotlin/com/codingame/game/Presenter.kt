@@ -1,24 +1,23 @@
 package com.codingame.game
 
-import java.lang.Object.*
-import com.codingame.game.core.*
+
 import com.codingame.game.core.Action.*
 import com.codingame.game.core.Arena
-import com.codingame.game.core.Position
 import com.codingame.game.core.Robot
 import com.codingame.gameengine.module.entities.Curve
 import com.codingame.gameengine.module.entities.GraphicEntityModule
 import com.codingame.gameengine.module.entities.Sprite
 import com.codingame.gameengine.module.entities.*
 import com.codingame.game.core.Action.Direction.*
-import com.google.inject.Inject
-//import jdk.nashorn.internal.runtime.Debug.id
+import com.codingame.gameengine.module.tooltip.TooltipModule
 
-
-
-
-class Presenter(private val arena: Arena, private val graphicEntityModule: GraphicEntityModule, private val player1: Player, private val player2: Player) {
-    private val robots: List<Pair<Robot, Position>> = arena.getAllRobots()
+class Presenter(
+    private val arena: Arena,
+    private val player1: Player,
+    private val player2: Player,
+    private val graphicEntityModule:GraphicEntityModule,
+    private val tooltipModule: TooltipModule,
+) {
     private val robotsGroups: MutableMap<Robot, Group> = mutableMapOf()
     private val robotsHP: MutableMap<Robot, Text> = mutableMapOf()
     private val robotsShields: MutableMap<Robot, Sprite> = mutableMapOf()
@@ -28,15 +27,25 @@ class Presenter(private val arena: Arena, private val graphicEntityModule: Graph
     private var playerRobotsNum : MutableMap<Player, Text> = mutableMapOf()
     private var playerHP : MutableMap<Player, Text> = mutableMapOf()
 
-
-
     init {
         drawArena()
     }
 
-    //fun triggerAction(robotAction: RobotAction) {
-    //  TODO("Not yet implemented")
-    //}
+    fun updateTooltips() {
+        robotsGroups.forEach { (robot, group) ->
+            val description = """
+                HP: ${robot.health}
+                GUARD: ${robot.guardUp}
+                OWNER: ${robot.owner.nicknameToken}
+                PREVIOUS  ${robot.prevPos}
+                CURRENT ${arena.getPositionOf(robot)}
+                
+                ${robot.action}
+            """.trimIndent()
+
+            tooltipModule.setTooltipText(group, description)
+        }
+    }
 
     private fun drawArena() {
         //graphicEntityModule.createSprite().image = Constants.BACKGROUND_SPRITE
@@ -106,13 +115,6 @@ class Presenter(private val arena: Arena, private val graphicEntityModule: Graph
             .setZIndex(101)
             .setFillColor(0xff0000)
             .setFontSize(50))
-
-
-        // przydatne do testow jesli zaczynasz z jakimiś robotami
-        //for(robot in robots) {
-          //  addRobot(robot.first)
-        //}
-
     }
 
     private fun updateView(){
@@ -370,11 +372,11 @@ class Presenter(private val arena: Arena, private val graphicEntityModule: Graph
             .setZIndex(1)
         if(robot.owner.index == 0)
         {
-            robotSprite.setFillColor(0x0000FF)
+            robotSprite.setFillColor(0x1a75ff)
         }
         else if(robot.owner.index == 1)
         {
-            robotSprite.setFillColor(0xFF0000)
+            robotSprite.setFillColor(0xFF3333)
         }
 
         val robotPosition = arena.getPositionOf(robot)
@@ -414,6 +416,4 @@ class Presenter(private val arena: Arena, private val graphicEntityModule: Graph
         playerRobotsNum[robot.owner]!!.setText("Robots: " + arena.getAllRobotsOwnedBy(robot.owner).count().toString())
         playerHP[robot.owner]!!.setText("HP: " + countHP(robot.owner))
     }
-
-
 }

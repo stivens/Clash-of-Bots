@@ -20,6 +20,8 @@ dependencies {
 
     implementation 'com.codingame.gameengine:core:3.15.0'
     implementation 'com.codingame.gameengine:module-entities:3.15.0'
+    implementation 'com.codingame.gameengine:module-tooltip:3.15.0'
+    implementation 'com.codingame.gameengine:module-endscreen:3.15.0'
     implementation 'com.codingame.gameengine:runner:3.15.0'
 
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.1"
