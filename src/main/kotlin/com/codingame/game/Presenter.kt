@@ -17,7 +17,7 @@ import com.google.inject.Inject
 
 
 
-class Presenter(private val arena: Arena, private val graphicEntityModule: GraphicEntityModule) {
+class Presenter(private val arena: Arena, private val graphicEntityModule: GraphicEntityModule, private val player1: Player, private val player2: Player) {
     private val robots: List<Pair<Robot, Position>> = arena.getAllRobots()
     private val robotsGroups: MutableMap<Robot, Group> = mutableMapOf()
     private val robotsHP: MutableMap<Robot, Text> = mutableMapOf()
@@ -25,6 +25,9 @@ class Presenter(private val arena: Arena, private val graphicEntityModule: Graph
     private val robotsFists: MutableMap<Robot, Sprite> = mutableMapOf()
     private val fieldHight : Int = 824 / arena.height
     private val fieldWidth : Int = 1664 / arena.width
+    private var playerRobotsNum : MutableMap<Player, Text> = mutableMapOf()
+    private var playerHP : MutableMap<Player, Text> = mutableMapOf()
+
 
 
     init {
@@ -50,6 +53,60 @@ class Presenter(private val arena: Arena, private val graphicEntityModule: Graph
                     .setAnchor(.5).setZIndex(0)
             }
         }
+        //player1
+        graphicEntityModule.createSprite().setImage(player1.avatarToken)
+            .setX(200)
+            .setY(10)
+            .setZIndex(101)
+
+        graphicEntityModule.createText(player1.nicknameToken)
+            .setX(300)
+            .setY(10)
+            .setZIndex(101)
+            .setFillColor(0x0000ff)
+            .setFontSize(40)
+
+        playerRobotsNum.put(player1, graphicEntityModule.createText("Robots: " + arena.getAllRobotsOwnedBy(player1).count().toString())
+            .setX(350)
+            .setY(60)
+            .setZIndex(101)
+            .setFillColor(0x0000ff)
+            .setFontSize(50))
+
+        playerHP.put(player1, graphicEntityModule.createText("HP: " + countHP(player1))
+            .setX(600)
+            .setY(60)
+            .setZIndex(101)
+            .setFillColor(0x0000ff)
+            .setFontSize(50))
+
+
+        //player2
+        graphicEntityModule.createSprite().setImage(player2.avatarToken)
+            .setX(1300)
+            .setY(10)
+            .setZIndex(101)
+        graphicEntityModule.createText(player2.nicknameToken)
+            .setX(1400)
+            .setY(10)
+            .setZIndex(101)
+            .setFillColor(0xff0000)
+            .setFontSize(40)
+
+        playerRobotsNum.put(player2, graphicEntityModule.createText("Robots: " + arena.getAllRobotsOwnedBy(player2).count().toString())
+            .setX(1450)
+            .setY(60)
+            .setZIndex(101)
+            .setFillColor(0xff0000)
+            .setFontSize(50))
+
+        playerHP.put(player2, graphicEntityModule.createText("HP: " + countHP(player2))
+            .setX(1700)
+            .setY(60)
+            .setZIndex(101)
+            .setFillColor(0xff0000)
+            .setFontSize(50))
+
 
         // przydatne do testow jesli zaczynasz z jakimiś robotami
         //for(robot in robots) {
@@ -60,6 +117,16 @@ class Presenter(private val arena: Arena, private val graphicEntityModule: Graph
 
     private fun updateView(){
 
+    }
+
+    private fun countHP(player: Player): String
+    {
+        var hp = 0
+        for(robot in arena.getAllRobotsOwnedBy(player))
+        {
+            hp += robot.first.health
+        }
+        return hp.toString()
     }
 
     fun triggerGuard(robot: Robot, guard: Guard) {
@@ -238,12 +305,16 @@ class Presenter(private val arena: Arena, private val graphicEntityModule: Graph
 
     fun triggerDamage(robot: Robot) {
         robotsHP[robot]!!.setText(robot.health.toString())
+        playerHP[robot.owner]!!.setText("HP: " + countHP(robot.owner))
+
     }
 
     fun triggerDeath(robot: Robot) {
         robotsGroups[robot]!!.setScale(0.1, Curve.LINEAR)
         graphicEntityModule.commitWorldState(0.9)
         robotsGroups[robot]!!.setVisible(false)
+        playerRobotsNum[robot.owner]!!.setText("Robots: " + arena.getAllRobotsOwnedBy(robot.owner).count().toString())
+
     }
 
     fun copyGroup(robot: Robot){
@@ -339,6 +410,9 @@ class Presenter(private val arena: Arena, private val graphicEntityModule: Graph
             .setX(robotPosition!!.x * fieldWidth + 140)
             .setY(robotPosition!!.y * fieldHight + 140)
         robotsGroups.put(robot, robotGroup)
+
+        playerRobotsNum[robot.owner]!!.setText("Robots: " + arena.getAllRobotsOwnedBy(robot.owner).count().toString())
+        playerHP[robot.owner]!!.setText("HP: " + countHP(robot.owner))
     }
 
 
