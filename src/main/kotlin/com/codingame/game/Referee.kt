@@ -2,7 +2,6 @@ package com.codingame.game
 
 import com.codingame.game.core.*
 import com.codingame.game.util.Symmetry
-import com.codingame.gameengine.core.AbstractPlayer
 import com.codingame.gameengine.core.AbstractReferee
 import com.codingame.gameengine.core.GameManager
 import com.codingame.gameengine.core.MultiplayerGameManager
@@ -25,11 +24,11 @@ class Referee : AbstractReferee() {
     @Inject private lateinit var endScreenModule: EndScreenModule
 
     private lateinit var presenter: Presenter
-    private lateinit var arena: Arena
     private lateinit var interpreter: Interpreter
 
+    private lateinit var arena: Arena
+
     private lateinit var rng: Random
-    private lateinit var initialSpawnPoints: SpawnPoints
 
     private lateinit var player1: Player
     private lateinit var player2: Player
@@ -42,16 +41,17 @@ class Referee : AbstractReferee() {
                     maxTurns = Config.Referee.MAX_TURNS
         }
 
+        rng = Random(gameManager.seed)
+
         player1 = gameManager.getPlayer(0)
         player2 = gameManager.getPlayer(1)
 
         arena = Arena(Config.Arena.WIDTH, Config.Arena.HEIGHT)
+
         presenter = Presenter(arena, player1, player2, graphicEntityModule, tooltipModule)
         interpreter = Interpreter(arena, presenter)
-        rng = Random(gameManager.seed)
-        initialSpawnPoints = loadInitialSpawnPoints()
 
-        initialSpawnPoints.spawn(arena, player1, player2, presenter)
+        loadInitialSpawnPoints().doSpawn(arena, player1, player2, presenter)
     }
 
 
@@ -61,23 +61,23 @@ class Referee : AbstractReferee() {
 
     override fun gameTurn(turn: Int) {
         if (shouldSpawnNewRobots(turn)) {
-            pickSpawnPoints()?.spawn(arena, player1, player2, presenter)
+            pickSpawnPoints()?.doSpawn(arena, player1, player2, presenter)
         }
 
         performPlayersIO()
 
         if (isGameover()) {
             gameManager.endGame()
+        } else {
+            val player1Actions = (player1.robots zip player1.actions).toMap()
+            val player2Actions = (player2.robots zip player2.actions).toMap()
+
+            interpreter.execute(player1Actions + player2Actions)
         }
-
-        val player1Actions = (player1.robots zip player1.actions).toMap()
-        val player2Actions = (player2.robots zip player2.actions).toMap()
-
-        interpreter.execute(player1Actions + player2Actions)
     }
 
     private fun shouldSpawnNewRobots(turn: Int) = turn % Config.Referee.SPAWN_TURN_DELAY == 0
-    private fun isGameover() = gameManager.activePlayers.size < 2
+    private fun isGameover() = gameManager.activePlayers.size < gameManager.playerCount
 
     override fun onEnd() {
         gameManager.activePlayers.forEach { player ->
@@ -142,7 +142,7 @@ class Referee : AbstractReferee() {
         player.score = -1
         player.deactivate(reason)
         gameManager.addToGameSummary(
-            GameManager.formatErrorMessage("${player.nicknameToken} was disqualified. ${reason}")
+            GameManager.formatErrorMessage("${player.nicknameToken} was disqualified. $reason")
         )
     }
 
@@ -156,12 +156,12 @@ class Referee : AbstractReferee() {
         val forPlayer1: Set<Position>,
         val forPlayer2: Set<Position>
     ) {
-        fun spawn(arena: Arena, player1: Player, player2: Player, presenter: Presenter?) {
-            forPlayer1.spawn(arena, player1, presenter)
-            forPlayer2.spawn(arena, player2, presenter)
+        fun doSpawn(arena: Arena, player1: Player, player2: Player, presenter: Presenter?) {
+            forPlayer1.doSpawn(arena, player1, presenter)
+            forPlayer2.doSpawn(arena, player2, presenter)
         }
 
-        private fun Set<Position>.spawn(arena: Arena, player: Player, presenter: Presenter?) {
+        private fun Set<Position>.doSpawn(arena: Arena, player: Player, presenter: Presenter?) {
             this.forEach { position ->
                 val robot = Robot(owner = player)
                 arena.emplace(robot, position)
