@@ -12,6 +12,8 @@ import com.codingame.gameengine.module.entities.*
 import com.codingame.game.core.Action.Direction.*
 import com.codingame.gameengine.module.tooltip.TooltipModule
 
+
+
 class Presenter(
     private val arena: Arena,
     private val player1: Player,
@@ -21,13 +23,38 @@ class Presenter(
 ) {
     private val robotsGroups: MutableMap<Robot, Group> = mutableMapOf()
     private val robotsHP: MutableMap<Robot, Text> = mutableMapOf()
+    private val robotsDirect: MutableMap<Robot, Int> = mutableMapOf()
+    private val robotsSprite: MutableMap<Robot, SpriteAnimation> = mutableMapOf()
     private val robotsShields: MutableMap<Robot, Sprite> = mutableMapOf()
-    private val robotsFists: MutableMap<Robot, Sprite> = mutableMapOf()
-    private val fieldHight : Int = 824 / arena.height
-    private val fieldWidth : Int = 1664 / arena.width
+    private val fieldHight : Int = 1000 / arena.height
+    private val fieldWidth : Int = 1000 / arena.width
     private var playerRobotsNum : MutableMap<Player, Text> = mutableMapOf()
     private var playerHP : MutableMap<Player, Text> = mutableMapOf()
     var robotActions: Map<Robot, Action> = mapOf()
+
+    // @Inject var tooltips: TooltipModule? = null
+    private val blueSheet = graphicEntityModule.createSpriteSheetSplitter()
+        .setSourceImage("blue.png")
+        .setImageCount(16)
+        .setWidth(150)
+        .setHeight(150)
+        .setOrigRow(0)
+        .setOrigCol(0)
+        .setImagesPerRow(4)
+        .setName("blue")
+        .split()
+    private val redSheet = graphicEntityModule.createSpriteSheetSplitter()
+        .setSourceImage("red.png")
+        .setImageCount(16)
+        .setWidth(150)
+        .setHeight(150)
+        .setOrigRow(0)
+        .setOrigCol(0)
+        .setImagesPerRow(4)
+        .setName("red")
+        .split()
+
+
 
     init {
         drawArena()
@@ -47,7 +74,6 @@ class Presenter(
     private fun drawArena() {
         //graphicEntityModule.createSprite().image = Constants.BACKGROUND_SPRITE
         graphicEntityModule.createSprite().setImage(Config.Presenter.FRAME_SPRITE).setZIndex(100)
-
 
         for (x in 0..arena.width - 1) {
             for(y in 0..arena.height - 1) {
@@ -347,16 +373,7 @@ class Presenter(
 
         robotsShields.replace(robot, robotShield)
 
-        val robotFist = graphicEntityModule.createSprite()
-            .setImage(Config.Presenter.FIST_SPRITE)
-            .setAnchor(.5)
-            .setZIndex(3)
-            .setScale(0.1)
-            .setVisible(false)
-        robotsFists.replace(robot, robotFist)
-
-
-        val robotGroup = graphicEntityModule.createGroup(robotSprite, robotHP, robotShield, robotFist)
+        val robotGroup = graphicEntityModule.createGroup(robotSprite, robotHP, robotShield)
             .setZIndex(3)
         robotsGroups.replace(robot, robotGroup)
     }
@@ -395,16 +412,9 @@ class Presenter(
 
         robotsShields.put(robot, robotShield)
 
-        val robotFist = graphicEntityModule.createSprite()
-            .setImage(Config.Presenter.FIST_SPRITE)
-            .setAnchor(-0.1)
-            .setZIndex(3)
-            .setScale(0.1)
-            .setVisible(false)
-        robotsFists.put(robot, robotFist)
 
 
-        val robotGroup = graphicEntityModule.createGroup(robotSprite, robotHP, robotShield, robotFist)
+        val robotGroup = graphicEntityModule.createGroup(robotSprite, robotHP, robotShield)
             .setZIndex(3)
             .setX(robotPosition!!.x * fieldWidth + 140)
             .setY(robotPosition!!.y * fieldHight + 140)

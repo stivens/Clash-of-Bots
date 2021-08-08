@@ -44,7 +44,7 @@ object Config {
         const val FLOOR_SPRITE  = "brick4.png"
         const val SHIELD_SPRITE = "shield.png"
         const val FIST_SPRITE   = "fist.png"
-        const val FRAME_SPRITE  = "frame.png"
+        const val FRAME_SPRITE  = "tlo4.png"
 
         const val COLOR_BLUE = 0x1a75ff
         const val COLOR_RED  = 0xff3333
