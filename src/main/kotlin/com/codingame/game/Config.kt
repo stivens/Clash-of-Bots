@@ -15,8 +15,8 @@ object Config {
     }
 
     object Arena {
-        const val WIDTH  = 16
-        const val HEIGHT = 16
+        const val WIDTH  = 15
+        const val HEIGHT = 15
     }
 
     object Referee {
