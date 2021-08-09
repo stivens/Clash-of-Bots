@@ -97,17 +97,18 @@ class Presenter(
         }
         //player1
         graphicEntityModule.createSprite().setImage(player1.avatarToken)
-            .setX(50) //50 //10
+            .setX(10) //50 //10
             .setY(100)
             .setZIndex(101)
 
         graphicEntityModule.createText(player1.nicknameToken)
-            .setX(200) //200 //120
+            .setX(140) //200 //120
             .setY(120)
             .setZIndex(101)
             .setFillColor(Config.Presenter.COLOR_BLUE)
             .setFontFamily("Impact")
             .setFontSize(70)
+            .setStrokeThickness(3.0)
 
         playerRobotsNum.put(player1, graphicEntityModule.createText("Robots: " + arena.getAllRobotsOwnedBy(player1).count().toString())
             .setX(100)
@@ -115,7 +116,9 @@ class Presenter(
             .setZIndex(101)
             .setFillColor(0xffffff)
             .setFontFamily("Comic Sans MS")
-            .setFontSize(60))
+            .setFontSize(60)
+            .setStrokeThickness(3.0))
+
 
         playerHP.put(player1, graphicEntityModule.createText("HP: " + countHP(player1))
             .setX(100)
@@ -123,20 +126,22 @@ class Presenter(
             .setZIndex(101)
             .setFillColor(0xffffff)
             .setFontFamily("Comic Sans MS")
-            .setFontSize(60))
+            .setFontSize(60)
+            .setStrokeThickness(3.0))
 
         //player2
         graphicEntityModule.createSprite().setImage(player2.avatarToken)
-            .setX(1510) //1510 //1800
+            .setX(1470) //1510 //1800
             .setY(100)
             .setZIndex(101)
         graphicEntityModule.createText(player2.nicknameToken)
-            .setX(1660) //1660 //1470
+            .setX(1600) //1660 //1470
             .setY(120)
             .setZIndex(101)
             .setFillColor(Config.Presenter.COLOR_RED)
             .setFontFamily("Impact")
             .setFontSize(70)
+            .setStrokeThickness(3.0)
 
         playerRobotsNum.put(player2, graphicEntityModule.createText("Robots: " + arena.getAllRobotsOwnedBy(player2).count().toString())
             .setX(1560)
@@ -144,7 +149,8 @@ class Presenter(
             .setZIndex(101)
             .setFillColor(0xffffff)
             .setFontFamily("Comic Sans MS")
-            .setFontSize(60))
+            .setFontSize(60)
+            .setStrokeThickness(3.0))
 
         playerHP.put(player2, graphicEntityModule.createText("HP: " + countHP(player2))
             .setX(1560)
@@ -152,7 +158,8 @@ class Presenter(
             .setZIndex(101)
             .setFillColor(0xffffff)
             .setFontFamily("Comic Sans MS")
-            .setFontSize(60))
+            .setFontSize(60)
+            .setStrokeThickness(3.0))
     }
 
     private fun updateView(){
@@ -290,7 +297,7 @@ class Presenter(
             robotGroup.setY(robotPosition.y * fieldHight + 49 - fieldHight/2, Curve.LINEAR)
 
             colisionAnimation.setX(robotPosition.x * fieldWidth + 470 - fieldWidth/2)
-                .setY(robotPosition.y * fieldHight - fieldHight/2 )
+                .setY(robotPosition.y * fieldHight  ) // /2
                 .setVisible(true)
         }
         else if(move == Move(DOWN))
@@ -317,7 +324,7 @@ class Presenter(
 
             colisionAnimation.setImages("col1b.png", "col2b.png", "col3b.png", "col4b.png", "col5b.png", "col6b.png")
                 .setScale(0.15)
-                .setX(robotPosition.x * fieldWidth + 470 - 3*fieldWidth/2)
+                .setX(robotPosition.x * fieldWidth + 470 - fieldWidth) //3/2
                 .setY(robotPosition.y * fieldHight  + fieldHight/2 )
                 .setVisible(true)
         }
@@ -396,9 +403,8 @@ class Presenter(
                     .setImages("explosion1.png", "explosion2.png", "explosion3.png", "explosion4.png", "explosion5.png")
                     .setScale(fieldHight/64.0)
                     .setZIndex(10)
-                    .setX((robotPosition.x + i) * fieldWidth + 470)
-                    .setY((robotPosition.y + j) * fieldHight + 50)
-                    //.setDuration(200)
+                    .setX(((robotPosition.x + i) % arena.width) * fieldWidth + 470)
+                    .setY(((robotPosition.y + j) % arena.height) * fieldHight + 50)
                     .setLoop(true)
                     .setVisible(true))
             }
@@ -530,6 +536,6 @@ class Presenter(
         robotsDirect.put(robot, rd)
         playerRobotsNum[robot.owner]!!.setText("Robots: " + arena.getAllRobotsOwnedBy(robot.owner).count().toString())
         playerHP[robot.owner]!!.setText("HP: " + countHP(robot.owner))
-        graphicEntityModule.commitEntityState(0.0,  robotGroup)
+        //graphicEntityModule.commitEntityState(0.0,  robotGroup)
     }
 }
