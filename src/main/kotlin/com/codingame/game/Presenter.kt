@@ -79,31 +79,23 @@ class Presenter(
 
         for (x in 0..arena.width - 1) {
             for(y in 0..arena.height - 1) {
-                var stone = "stone0.png"
-                if ((0..3).random() == 3) { stone = "stone" + (0..12).random().toString() + ".png"}
-                graphicEntityModule.createSprite().setImage(stone)
+                graphicEntityModule.createSprite().setImage("floor.png")
                     .setBaseHeight(fieldHight)
                     .setBaseWidth(fieldWidth)
                     .setX(x * fieldWidth + fieldWidth/2 + 460)
                     .setY(y * fieldHight + fieldHight/2 + 40)
                     .setAnchor(.5).setZIndex(0)
-                graphicEntityModule.createSprite().setImage("brick6.png")
-                    .setBaseHeight(fieldHight)
-                    .setBaseWidth(fieldWidth)
-                    .setX(x * fieldWidth + fieldWidth/2 + 460)
-                    .setY(y * fieldHight + fieldHight/2 + 40)
-                    .setAnchor(.5).setZIndex(1)
             }
         }
         //player1
         graphicEntityModule.createSprite().setImage(player1.avatarToken)
             .setX(10) //50 //10
-            .setY(100)
+            .setY(40) //100
             .setZIndex(101)
 
         graphicEntityModule.createText(player1.nicknameToken)
             .setX(140) //200 //120
-            .setY(120)
+            .setY(60) //120
             .setZIndex(101)
             .setFillColor(Config.Presenter.COLOR_BLUE)
             .setFontFamily("Impact")
@@ -112,7 +104,7 @@ class Presenter(
 
         playerRobotsNum.put(player1, graphicEntityModule.createText("Robots: " + arena.getAllRobotsOwnedBy(player1).count().toString())
             .setX(100)
-            .setY(250)
+            .setY(190) //250
             .setZIndex(101)
             .setFillColor(0xffffff)
             .setFontFamily("Comic Sans MS")
@@ -122,7 +114,7 @@ class Presenter(
 
         playerHP.put(player1, graphicEntityModule.createText("HP: " + countHP(player1))
             .setX(100)
-            .setY(350)
+            .setY(290) //350
             .setZIndex(101)
             .setFillColor(0xffffff)
             .setFontFamily("Comic Sans MS")
@@ -132,11 +124,11 @@ class Presenter(
         //player2
         graphicEntityModule.createSprite().setImage(player2.avatarToken)
             .setX(1470) //1510 //1800
-            .setY(100)
+            .setY(40)
             .setZIndex(101)
         graphicEntityModule.createText(player2.nicknameToken)
             .setX(1600) //1660 //1470
-            .setY(120)
+            .setY(60)
             .setZIndex(101)
             .setFillColor(Config.Presenter.COLOR_RED)
             .setFontFamily("Impact")
@@ -145,7 +137,7 @@ class Presenter(
 
         playerRobotsNum.put(player2, graphicEntityModule.createText("Robots: " + arena.getAllRobotsOwnedBy(player2).count().toString())
             .setX(1560)
-            .setY(250)
+            .setY(190)
             .setZIndex(101)
             .setFillColor(0xffffff)
             .setFontFamily("Comic Sans MS")
@@ -154,7 +146,7 @@ class Presenter(
 
         playerHP.put(player2, graphicEntityModule.createText("HP: " + countHP(player2))
             .setX(1560)
-            .setY(350)
+            .setY(290)
             .setZIndex(101)
             .setFillColor(0xffffff)
             .setFontFamily("Comic Sans MS")
@@ -403,8 +395,8 @@ class Presenter(
                     .setImages("explosion1.png", "explosion2.png", "explosion3.png", "explosion4.png", "explosion5.png")
                     .setScale(fieldHight/64.0)
                     .setZIndex(10)
-                    .setX(((robotPosition.x + i) % arena.width) * fieldWidth + 470)
-                    .setY(((robotPosition.y + j) % arena.height) * fieldHight + 50)
+                    .setX((Math.floorMod(robotPosition.x + i, arena.width)) * fieldWidth + 470)
+                    .setY((Math.floorMod(robotPosition.y + j, arena.width)) * fieldHight + 50)
                     .setLoop(true)
                     .setVisible(true))
             }
