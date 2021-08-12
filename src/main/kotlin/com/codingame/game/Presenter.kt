@@ -91,6 +91,8 @@ class Presenter(
         graphicEntityModule.createSprite().setImage(player1.avatarToken)
             .setX(10) //50 //10
             .setY(40) //100
+            .setBaseWidth(100)
+            .setBaseHeight(100)
             .setZIndex(101)
 
         graphicEntityModule.createText(player1.nicknameToken)
@@ -125,6 +127,8 @@ class Presenter(
         graphicEntityModule.createSprite().setImage(player2.avatarToken)
             .setX(1470) //1510 //1800
             .setY(40)
+            .setBaseWidth(100)
+            .setBaseHeight(100)
             .setZIndex(101)
         graphicEntityModule.createText(player2.nicknameToken)
             .setX(1600) //1660 //1470
@@ -408,6 +412,8 @@ class Presenter(
             graphicEntityModule.commitEntityState(1.0, boom[i])
 
         }
+        playerRobotsNum[robot.owner]!!.setText("Robots: " + arena.getAllRobotsOwnedBy(robot.owner).count().toString())
+        graphicEntityModule.commitEntityState(0.99, playerRobotsNum[robot.owner])
     }
 
     fun triggerDamage(robot: Robot) {
@@ -424,19 +430,18 @@ class Presenter(
         if (robot.owner.index == 1) { sp.setImages(redSheet[rd],redSheet[rd+4]) }
         playerHP[robot.owner]!!.setText("HP: " + countHP(robot.owner))
         robotsHP[robot]!!.setText(robot.health.toString())
-        graphicEntityModule.commitEntityState(1.0, sp)
+        graphicEntityModule.commitEntityState(1.0, sp, playerHP[robot.owner], robotsHP[robot])
 
-        playerHP[robot.owner]!!.setText("HP: " + countHP(robot.owner))
-        robotsHP[robot]!!.setText(robot.health.toString())
     }
 
     fun triggerDeath(robot: Robot) {
         robotsGroups[robot]!!.setScale(1.0, Curve.LINEAR)
         graphicEntityModule.commitEntityState(0.8,  robotsGroups[robot]!!)
         robotsGroups[robot]!!.setScale(0.1, Curve.LINEAR)
-        graphicEntityModule.commitEntityState(0.99,  robotsGroups[robot]!!)
         robotsGroups[robot]!!.setVisible(false)
         playerRobotsNum[robot.owner]!!.setText("Robots: " + arena.getAllRobotsOwnedBy(robot.owner).count().toString())
+        graphicEntityModule.commitEntityState(0.99, playerRobotsNum[robot.owner], robotsGroups[robot]!!)
+
 
     }
 
