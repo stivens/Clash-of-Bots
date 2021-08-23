@@ -1,10 +1,8 @@
 package com.codingame.game
 
-import java.lang.Object.*
 import com.codingame.game.core.*
 import com.codingame.game.core.Action.*
 import com.codingame.game.core.Arena
-import com.codingame.game.core.Position
 import com.codingame.game.core.Robot
 import com.codingame.gameengine.module.entities.Curve
 import com.codingame.gameengine.module.entities.GraphicEntityModule
@@ -12,8 +10,6 @@ import com.codingame.gameengine.module.entities.Sprite
 import com.codingame.gameengine.module.entities.*
 import com.codingame.game.core.Action.Direction.*
 import com.codingame.gameengine.module.tooltip.TooltipModule
-import com.google.inject.Inject
-//import jdk.nashorn.internal.runtime.Debug.id
 
 class Presenter(
     private val arena: Arena,
@@ -22,7 +18,6 @@ class Presenter(
     private val graphicEntityModule: GraphicEntityModule,
     private val tooltipModule: TooltipModule
 ) {
-    private val robots: List<Pair<Robot, Position>> = arena.getAllRobots()
     private val robotsGroups: MutableMap<Robot, Group> = mutableMapOf()
     private val robotsHP: MutableMap<Robot, Text> = mutableMapOf()
     private val robotsDirect: MutableMap<Robot, Int> = mutableMapOf()
@@ -69,10 +64,6 @@ class Presenter(
             tooltipModule.setTooltipText(group, description)
         }
     }
-
-    //fun triggerAction(robotAction: RobotAction) {
-    //  TODO("Not yet implemented")
-    //}
 
     private fun drawArena() {
         graphicEntityModule.createSprite().setImage(Config.Presenter.FRAME_SPRITE).setZIndex(100)
@@ -152,9 +143,6 @@ class Presenter(
             .setFontFamily("Comic Sans MS")
             .setFontSize(60)
             .setStrokeThickness(3.0))
-    }
-
-    private fun updateView(){
     }
 
     private fun countHP(player: Player): String

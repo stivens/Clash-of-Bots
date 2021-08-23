@@ -60,8 +60,6 @@ class Referee : AbstractReferee() {
 
 
     override fun gameTurn(turn: Int) {
-
-
         performPlayersIO()
 
         if (isGameover()) {
@@ -72,10 +70,10 @@ class Referee : AbstractReferee() {
 
             interpreter.execute(player1Actions + player2Actions)
         }
+
         if (shouldSpawnNewRobots(turn)) {
             pickSpawnPoints()?.doSpawn(arena, player1, player2, presenter)
         }
-
     }
 
     private fun shouldSpawnNewRobots(turn: Int) = turn % Config.Referee.SPAWN_TURN_DELAY == 0
