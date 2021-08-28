@@ -92,7 +92,8 @@ class Presenter(
             .setZIndex(101)
             .setFillColor(Config.Presenter.COLOR_BLUE)
             .setFontFamily("Impact")
-            .setFontSize(70)
+            .setMaxWidth(320)
+            .setFontSize(60)
             .setStrokeThickness(3.0)
 
         playerRobotsNum.put(player1, graphicEntityModule.createText("Robots: " + arena.getAllRobotsOwnedBy(player1).count().toString())
@@ -121,13 +122,15 @@ class Presenter(
             .setBaseWidth(100)
             .setBaseHeight(100)
             .setZIndex(101)
+
         graphicEntityModule.createText(player2.nicknameToken)
             .setX(1600) //1660 //1470
             .setY(60)
             .setZIndex(101)
             .setFillColor(Config.Presenter.COLOR_RED)
+            .setMaxWidth(320)
             .setFontFamily("Impact")
-            .setFontSize(70)
+            .setFontSize(60)
             .setStrokeThickness(3.0)
 
         playerRobotsNum.put(player2, graphicEntityModule.createText("Robots: " + arena.getAllRobotsOwnedBy(player2).count().toString())
