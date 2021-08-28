@@ -11,29 +11,37 @@ class Interpreter(private val arena: Arena, private val presenter: Presenter?) {
         .sortedBy { Config.Interpreter.ACTION_PRIORITY[it] }
 
     fun execute(robotActions: Map<Robot, Action>) {
+        require(
+            robotActions.keys == arena.getAllRobots().map { (robot, _) -> robot}.toSet()
+        ) { "There must be a action for every single robot." }
+
         disableAllGuards()
+
+        presenter?.robotActions = robotActions
+        presenter?.updateTooltips()
 
         for (actionClass in orderOfPrecedence) {
             when (actionClass) {
-                Guard::class -> executeGuards(
-                    robotActions.filter { (_, action) -> action::class == Guard::class }
-                        .let(::discardCanceledActions) as Map<Robot, Guard>
-                )
-                Move::class -> executeMoves(
-                    robotActions
-                        .let(::discardCanceledActions)
-                )
-                Attack::class -> executeAttacks(
-                    robotActions.filter { (_, action) -> action::class == Attack::class }
-                        .let(::discardCanceledActions) as Map<Robot, Attack>
-                )
-                Selfdestruction::class -> executeSelfdestructions(
-                    robotActions.filter { (_, action) -> action::class == Selfdestruction::class }
-                        .let(::discardCanceledActions) as Map<Robot, Selfdestruction>
-                )
+                Guard::class ->
+                    executeGuards(
+                        robotActions.filter { (_, action) -> action::class == Guard::class }
+                            .let(::discardCanceledActions) as Map<Robot, Guard>)
+                Move::class ->
+                    executeMoves(
+                        robotActions
+                            .let(::discardCanceledActions))
+                Attack::class ->
+                    executeAttacks(
+                        robotActions.filter { (_, action) -> action::class == Attack::class }
+                            .let(::discardCanceledActions) as Map<Robot, Attack>)
+                Selfdestruction::class ->
+                    executeSelfdestructions(
+                        robotActions.filter { (_, action) -> action::class == Selfdestruction::class }
+                            .let(::discardCanceledActions) as Map<Robot, Selfdestruction>)
             }
 
             clearDeadRobots()
+            presenter?.updateTooltips()
         }
     }
 
@@ -45,8 +53,12 @@ class Interpreter(private val arena: Arena, private val presenter: Presenter?) {
     }
 
     private fun executeMoves(robotActions: Map<Robot, Action>) {
+        val initialPositions = robotActions.keys.map { robot ->
+            robot to arena.getPositionOf(robot)
+        }.toMap()
+
         fun getDepartureAndDestination(robot: Robot, move: Move): Pair<Position, Position> {
-            val departure = arena.getPositionOf(robot)
+            val departure = initialPositions[robot]
             require(departure != null)
 
             val destination = departure.apply(move.direction.asVector())
@@ -56,7 +68,6 @@ class Interpreter(private val arena: Arena, private val presenter: Presenter?) {
         }
 
         val moveGraph = MoveGraph()
-
         robotActions.forEach { (robot, action) ->
             when (action) {
                 is Move -> {
@@ -66,15 +77,14 @@ class Interpreter(private val arena: Arena, private val presenter: Presenter?) {
                 else -> moveGraph.registerPositionOccupancy(arena.getPositionOf(robot)!!)
             }
         }
-
         moveGraph.resolve()
 
         val moves = robotActions.filter { (_, action) -> action::class == Move::class } as Map<Robot, Move>
-
         moves.forEach { (robot, move) ->
             val (departure, destination) = getDepartureAndDestination(robot, move)
+            val causesCollision = moveGraph.checkCollision(departure, destination)
 
-            if (moveGraph.checkCollision(departure, destination)) {
+            if (causesCollision) {
                 listOfNotNull(robot, arena.get(destination)).forEach { r ->
                     damageRobot(r, Config.Robots.COLLISION_DAMAGE)
                 }
@@ -92,14 +102,13 @@ class Interpreter(private val arena: Arena, private val presenter: Presenter?) {
             require(robotPosition != null)
             val targetPosition = robotPosition.apply(attack.direction.asVector())
 
-            arena.get(targetPosition)?.let {damageRobot(it, Config.Robots.ATTACK_DAMAGE) }
+            arena.get(targetPosition)?.let { damageRobot(it, Config.Robots.ATTACK_DAMAGE) }
             presenter?.triggerAttack(robot, attack)
         }
     }
 
     private fun executeSelfdestructions(robotActions: Map<Robot, Selfdestruction>) {
         robotActions.forEach { (robot, selfdestruction) ->
-
             val position = arena.getPositionOf(robot)
             require(position != null)
 

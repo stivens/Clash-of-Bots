@@ -1,49 +1,520 @@
 package com.codingame.game
 
+import com.codingame.game.core.*
 import com.codingame.game.core.Action.*
 import com.codingame.game.core.Arena
-import com.codingame.game.core.Position
 import com.codingame.game.core.Robot
+import com.codingame.gameengine.module.entities.Curve
 import com.codingame.gameengine.module.entities.GraphicEntityModule
+import com.codingame.gameengine.module.entities.Sprite
+import com.codingame.gameengine.module.entities.*
+import com.codingame.game.core.Action.Direction.*
+import com.codingame.gameengine.module.tooltip.TooltipModule
 
-class Presenter(private val arena: Arena, private val graphicEntityModule: GraphicEntityModule) {
+class Presenter(
+    private val arena: Arena,
+    private val player1: Player,
+    private val player2: Player,
+    private val graphicEntityModule: GraphicEntityModule,
+    private val tooltipModule: TooltipModule
+) {
+    private val robotsGroups: MutableMap<Robot, Group> = mutableMapOf()
+    private val robotsHP: MutableMap<Robot, Text> = mutableMapOf()
+    private val robotsDirect: MutableMap<Robot, Int> = mutableMapOf()
+    private val robotsSprite: MutableMap<Robot, SpriteAnimation> = mutableMapOf()
+    private val robotsShields: MutableMap<Robot, Sprite> = mutableMapOf()
+    private val fieldHight : Int = 1000 / arena.height
+    private val fieldWidth : Int = 1000 / arena.width
+    private var playerRobotsNum : MutableMap<Player, Text> = mutableMapOf()
+    private var playerHP : MutableMap<Player, Text> = mutableMapOf()
+    var robotActions: Map<Robot, Action> = mapOf()
+
+    private val blueSheet = graphicEntityModule.createSpriteSheetSplitter()
+        .setSourceImage("blue.png")
+        .setImageCount(16)
+        .setWidth(150)
+        .setHeight(150)
+        .setOrigRow(0)
+        .setOrigCol(0)
+        .setImagesPerRow(4)
+        .setName("blue")
+        .split()
+    private val redSheet = graphicEntityModule.createSpriteSheetSplitter()
+        .setSourceImage("red.png")
+        .setImageCount(16)
+        .setWidth(150)
+        .setHeight(150)
+        .setOrigRow(0)
+        .setOrigCol(0)
+        .setImagesPerRow(4)
+        .setName("red")
+        .split()
+
     init {
         drawArena()
     }
 
-    private fun drawArena() {
-//        TODO()
+    fun updateTooltips() {
+        robotsGroups.forEach { (robot, group) ->
+            val description = """
+                ${arena.getPositionOf(robot)}
+                ${robotActions[robot] ?: ""}
+            """.trimIndent()
+
+            tooltipModule.setTooltipText(group, description)
+        }
     }
 
+    private fun drawArena() {
+        graphicEntityModule.createSprite().setImage(Config.Presenter.FRAME_SPRITE).setZIndex(100)
+
+        for (x in 0..arena.width - 1) {
+            for(y in 0..arena.height - 1) {
+                graphicEntityModule.createSprite().setImage("floor.png")
+                    .setBaseHeight(fieldHight)
+                    .setBaseWidth(fieldWidth)
+                    .setX(x * fieldWidth + fieldWidth/2 + 460)
+                    .setY(y * fieldHight + fieldHight/2 + 40)
+                    .setAnchor(.5).setZIndex(0)
+            }
+        }
+        //player1
+        graphicEntityModule.createSprite().setImage(player1.avatarToken)
+            .setX(10) //50 //10
+            .setY(40) //100
+            .setBaseWidth(100)
+            .setBaseHeight(100)
+            .setZIndex(101)
+
+        graphicEntityModule.createText(player1.nicknameToken)
+            .setX(140) //200 //120
+            .setY(60) //120
+            .setZIndex(101)
+            .setFillColor(Config.Presenter.COLOR_BLUE)
+            .setFontFamily("Impact")
+            .setFontSize(70)
+            .setStrokeThickness(3.0)
+
+        playerRobotsNum.put(player1, graphicEntityModule.createText("Robots: " + arena.getAllRobotsOwnedBy(player1).count().toString())
+            .setX(100)
+            .setY(190) //250
+            .setZIndex(101)
+            .setFillColor(0xffffff)
+            .setFontFamily("Comic Sans MS")
+            .setFontSize(60)
+            .setStrokeThickness(3.0))
+
+
+        playerHP.put(player1, graphicEntityModule.createText("HP: " + countHP(player1))
+            .setX(100)
+            .setY(290) //350
+            .setZIndex(101)
+            .setFillColor(0xffffff)
+            .setFontFamily("Comic Sans MS")
+            .setFontSize(60)
+            .setStrokeThickness(3.0))
+
+        //player2
+        graphicEntityModule.createSprite().setImage(player2.avatarToken)
+            .setX(1470) //1510 //1800
+            .setY(40)
+            .setBaseWidth(100)
+            .setBaseHeight(100)
+            .setZIndex(101)
+        graphicEntityModule.createText(player2.nicknameToken)
+            .setX(1600) //1660 //1470
+            .setY(60)
+            .setZIndex(101)
+            .setFillColor(Config.Presenter.COLOR_RED)
+            .setFontFamily("Impact")
+            .setFontSize(70)
+            .setStrokeThickness(3.0)
+
+        playerRobotsNum.put(player2, graphicEntityModule.createText("Robots: " + arena.getAllRobotsOwnedBy(player2).count().toString())
+            .setX(1560)
+            .setY(190)
+            .setZIndex(101)
+            .setFillColor(0xffffff)
+            .setFontFamily("Comic Sans MS")
+            .setFontSize(60)
+            .setStrokeThickness(3.0))
+
+        playerHP.put(player2, graphicEntityModule.createText("HP: " + countHP(player2))
+            .setX(1560)
+            .setY(290)
+            .setZIndex(101)
+            .setFillColor(0xffffff)
+            .setFontFamily("Comic Sans MS")
+            .setFontSize(60)
+            .setStrokeThickness(3.0))
+    }
+    private fun countHP(player: Player): Int =
+        arena.getAllRobotsOwnedBy(player).map { (robot, _) -> robot.health }.sum()
+
     fun triggerGuard(robot: Robot, guard: Guard) {
-//        TODO()
+        robotsShields[robot]!!.setScale(0.1).setVisible(true)
+        graphicEntityModule.commitWorldState(0.0)
+        robotsShields[robot]!!.setScale(0.05, Curve.LINEAR)
     }
 
     fun triggerGuardDisable(robot: Robot) {
-//        TODO()
+        robotsShields[robot]!!.setVisible(false)
+    }
+    private fun setDirection(robot: Robot, move: Move)
+    {
+        if(move == Move(UP)) { robotsDirect[robot] = 0
+            if (robot.owner.index == 0)
+                robotsSprite[robot]!!.setImages(blueSheet[0], blueSheet[4])
+            else robotsSprite[robot]!!.setImages(redSheet[0], redSheet[4]) }
+        else if(move == Move(DOWN)) { robotsDirect[robot] = 2
+            if (robot.owner.index == 0)
+                robotsSprite[robot]!!.setImages(blueSheet[2], blueSheet[6])
+            else robotsSprite[robot]!!.setImages(redSheet[2], redSheet[6]) }
+        else if(move == Move(RIGHT)) { robotsDirect[robot] = 1
+            if (robot.owner.index == 0)
+                robotsSprite[robot]!!.setImages(blueSheet[1], blueSheet[5])
+            else robotsSprite[robot]!!.setImages(redSheet[1], redSheet[5]) }
+        else if(move == Move(LEFT)) { robotsDirect[robot] = 3
+            if (robot.owner.index == 0)
+                robotsSprite[robot]!!.setImages(blueSheet[3], blueSheet[7])
+            else robotsSprite[robot]!!.setImages(redSheet[3], redSheet[7]) }
     }
 
     fun triggerMove(robot: Robot, move: Move) {
-//        TODO()
+        val robotGroup = robotsGroups[robot] !!
+        val robotPosition = arena.getPositionOf(robot) !!
+        setDirection(robot, move)
+        robotsSprite[robot]!!.setLoop(true)
+        graphicEntityModule.commitEntityState(0.0, robotGroup, robotsSprite[robot])
+
+        if((move == Move(UP)) and (robotPosition.y == arena.height - 1))
+        {
+            copyGroup(robot)
+            val robotGroupCopy = robotsGroups[robot] !!
+            setDirection(robot, move)
+            robotGroupCopy.setY((robotPosition.y + 1)  * fieldHight + 50, Curve.NONE)
+                .setX(robotPosition.x * fieldWidth + 470, Curve.NONE)
+            graphicEntityModule.commitEntityState(0.0, robotGroup,robotsSprite[robot], robotGroupCopy)
+            robotGroup.setY(-1 * fieldHight + 50, Curve.LINEAR)
+            robotGroupCopy.setY(robotPosition.y * fieldHight + 50, Curve.LINEAR)
+            graphicEntityModule.commitEntityState(0.5, robotGroup,robotsSprite[robot], robotGroupCopy)
+            robotGroup.setVisible(false)
+        }
+
+        else if((move == Move(DOWN)) and (robotPosition.y == 0))
+        {
+            copyGroup(robot)
+            val robotGroupCopy = robotsGroups[robot] !!
+            setDirection(robot, move)
+            robotGroupCopy.setY((robotPosition.y - 1)  * fieldHight + 50, Curve.NONE)
+                .setX(robotPosition.x * fieldWidth + 470, Curve.NONE)
+            graphicEntityModule.commitEntityState(0.0, robotGroup,robotsSprite[robot], robotGroupCopy)
+            robotGroup.setY(arena.height * fieldHight + 50, Curve.LINEAR)
+            robotGroupCopy.setY(robotPosition.y * fieldHight + 50, Curve.LINEAR)
+            graphicEntityModule.commitEntityState(0.5, robotGroup,robotsSprite[robot], robotGroupCopy)
+            robotGroup.setVisible(false)
+        }
+
+        else if((move == Move(RIGHT)) and (robotPosition.x == 0))
+        {
+            copyGroup(robot)
+            val robotGroupCopy = robotsGroups[robot] !!
+            setDirection(robot, move)
+            robotGroupCopy.setY(robotPosition.y  * fieldHight + 50, Curve.NONE)
+                .setX( - 1 * fieldWidth + 470, Curve.NONE)
+            graphicEntityModule.commitEntityState(0.0, robotGroup,robotsSprite[robot], robotGroupCopy)
+            robotGroup.setX(arena.width * fieldWidth + 470, Curve.LINEAR)
+            robotGroupCopy.setX(robotPosition.x * fieldWidth + 470, Curve.LINEAR)
+            graphicEntityModule.commitEntityState(0.5, robotGroup,robotsSprite[robot], robotGroupCopy)
+            robotGroup.setVisible(false)
+        }
+
+        else if((move == Move(LEFT)) and (robotPosition.x == arena.width - 1))
+        {
+            copyGroup(robot)
+            val robotGroupCopy = robotsGroups[robot] !!
+            setDirection(robot, move)
+            robotGroupCopy.setY(robotPosition.y  * fieldHight + 50, Curve.NONE)
+                .setX( arena.width * fieldWidth + 470, Curve.NONE)
+            graphicEntityModule.commitEntityState(0.0, robotGroup,robotsSprite[robot], robotGroupCopy)
+            robotGroup.setX(-1 * fieldWidth + 470, Curve.LINEAR)
+            robotGroupCopy.setX(robotPosition.x * fieldWidth + 470, Curve.LINEAR)
+            graphicEntityModule.commitEntityState(0.5, robotGroup,robotsSprite[robot], robotGroupCopy)
+            robotGroup.setVisible(false)
+        }
+
+        else {
+            robotGroup.setY(robotPosition.y * fieldHight + 50, Curve.LINEAR)
+                .setX(robotPosition.x * fieldWidth + 470, Curve.LINEAR)
+            graphicEntityModule.commitEntityState(0.5, robotGroup, robotsSprite[robot])
+        }
+        robotsSprite[robot]!!.setLoop(false)
     }
 
+
     fun triggerCollision(robot: Robot, move: Move) {
-//        TODO()
+
+        val robotGroup = robotsGroups[robot] !!
+        val robotPosition = arena.getPositionOf(robot) !!
+        setDirection(robot, move)
+        robotsSprite[robot]!!.setLoop(true)
+        graphicEntityModule.commitEntityState(0.0, robotGroup, robotsSprite[robot])
+
+        val colisionAnimation = graphicEntityModule.createSpriteAnimation()
+            .setImages("col1.png", "col2.png", "col3.png", "col4.png", "col5.png", "col6.png")
+            .setScale(0.15)
+            .setZIndex(5)
+            .setDuration(200)
+            .setLoop(true)
+            .setVisible(false)
+
+        if(move == Move(UP))
+        {
+            robotGroup.setY(robotPosition.y * fieldHight + 49 - fieldHight/2, Curve.LINEAR)
+
+            colisionAnimation.setX(robotPosition.x * fieldWidth + 470 - fieldWidth/2)
+                .setY(robotPosition.y * fieldHight  ) // /2
+                .setVisible(true)
+        }
+        else if(move == Move(DOWN))
+        {
+            robotGroup.setY(robotPosition.y * fieldHight + 51 + fieldHight/2, Curve.LINEAR)
+
+            colisionAnimation.setX(robotPosition.x * fieldWidth + 470 - fieldWidth/2)
+                .setY(robotPosition.y * fieldHight + 40 + fieldHight/2 )
+                .setVisible(true)
+        }
+        else if(move == Move(RIGHT))
+        {
+            robotGroup.setX(robotPosition.x * fieldWidth + 470 + fieldWidth/2, Curve.LINEAR)
+
+            colisionAnimation.setImages("col1b.png", "col2b.png", "col3b.png", "col4b.png", "col5b.png", "col6b.png")
+                .setScale(0.15)
+                .setX(robotPosition.x * fieldWidth + 470 + fieldWidth/2)
+                .setY(robotPosition.y * fieldHight + fieldHight/2 )
+                .setVisible(true)
+        }
+        else if(move == Move(LEFT))
+        {
+            robotGroup.setX(robotPosition.x * fieldWidth + 470 - fieldWidth/2, Curve.LINEAR)
+
+            colisionAnimation.setImages("col1b.png", "col2b.png", "col3b.png", "col4b.png", "col5b.png", "col6b.png")
+                .setScale(0.15)
+                .setX(robotPosition.x * fieldWidth + 470 - fieldWidth) //3/2
+                .setY(robotPosition.y * fieldHight  + fieldHight/2 )
+                .setVisible(true)
+        }
+        graphicEntityModule.commitWorldState(0.3)
+        robotGroup.setY(robotPosition.y * fieldHight + 50, Curve.LINEAR)
+            .setX(robotPosition.x * fieldWidth + 470, Curve.LINEAR)
+        graphicEntityModule.commitWorldState(0.4)
+
+        colisionAnimation.setVisible(false)
+        graphicEntityModule.commitWorldState(0.5)
     }
 
     fun triggerAttack(robot: Robot, attack: Attack) {
-//        TODO()
+        val robotPosition = arena.getPositionOf(robot) !!
+        val bullet = graphicEntityModule.createSpriteAnimation()
+            .setImages("shot0.png", "shot1.png", "shot2.png", "shot3.png")
+            .setZIndex(10)
+            //.setScale(0.1)
+            .setX((robotPosition.x) * fieldWidth + 470)
+            .setY((robotPosition.y) * fieldHight + 70)
+            .setLoop(true)
+            .setVisible(false)
+            .setDuration(10) //tutaj
+
+        if(attack == Attack(RIGHT))
+        {
+            bullet.setRotation(1.6).setVisible(true).setX((robotPosition.x + 1) * fieldWidth + 470)
+            graphicEntityModule.commitEntityState(0.5, bullet)
+            bullet.setX((robotPosition.x + 2) * fieldWidth + 430, Curve.LINEAR)
+            graphicEntityModule.commitEntityState(0.9, bullet)
+            bullet.setVisible(false)
+        }
+
+        if(attack == Attack(DOWN))
+        {
+            bullet.setRotation(3.1).setVisible(true).setX(robotPosition.x * fieldWidth + 500)
+                .setY(robotPosition.y * fieldHight + 90)
+            graphicEntityModule.commitEntityState(0.5, bullet)
+            bullet.setY((robotPosition.y + 1) * fieldHight + 80, Curve.LINEAR)
+            graphicEntityModule.commitEntityState(0.9, bullet)
+            bullet.setVisible(false)
+        }
+        if(attack == Attack(UP))
+        {
+            bullet.setVisible(true)
+                .setX((robotPosition.x) * fieldWidth + 480)
+                .setY((robotPosition.y) * fieldHight + 60)
+            graphicEntityModule.commitEntityState(0.5, bullet)
+            bullet.setY((robotPosition.y - 1) * fieldHight + 70, Curve.LINEAR)
+            graphicEntityModule.commitEntityState(0.9, bullet)
+            bullet.setVisible(false)
+        }
+        if(attack == Attack(LEFT))
+        {
+            bullet.setRotation(4.7).setVisible(true)
+                .setX((robotPosition.x) * fieldWidth + 470)
+                .setY((robotPosition.y) * fieldHight + 85)
+            graphicEntityModule.commitEntityState(0.5, bullet)
+            bullet.setX((robotPosition.x - 1) * fieldHight + 470, Curve.LINEAR)
+            graphicEntityModule.commitEntityState(0.9, bullet)
+            bullet.setVisible(false)
+        }
+
+
     }
 
+
     fun triggerSelfdestruction(robot: Robot, selfdestruction: Selfdestruction) {
-//        TODO()
+        val robotPosition = arena.getPositionOf(robot) !!
+        var  boom: ArrayList<SpriteAnimation> = ArrayList()
+        for (i in -1..1)
+        {
+            for (j in -1..1)
+            {
+                boom.add(graphicEntityModule.createSpriteAnimation()
+                    .setImages("explosion1.png", "explosion2.png", "explosion3.png", "explosion4.png", "explosion5.png")
+                    .setScale(fieldHight/64.0)
+                    .setZIndex(10)
+                    .setX((Math.floorMod(robotPosition.x + i, arena.width)) * fieldWidth + 470)
+                    .setY((Math.floorMod(robotPosition.y + j, arena.width)) * fieldHight + 50)
+                    .setLoop(true)
+                    .setVisible(true))
+            }
+        }
+        for (i in 0..8) {
+            graphicEntityModule.commitEntityState(0.5, boom[i])
+            graphicEntityModule.commitEntityState(0.9, boom[i])
+            boom[i].setVisible(false)
+            graphicEntityModule.commitEntityState(1.0, boom[i])
+
+        }
+        playerHP[robot.owner]!!.setText("HP: " + countHP(robot.owner))
+        playerRobotsNum[robot.owner]!!.setText("Robots: " + arena.getAllRobotsOwnedBy(robot.owner).count().toString())
+        graphicEntityModule.commitEntityState(1.0, playerRobotsNum[robot.owner], playerHP[robot.owner])
     }
 
     fun triggerDamage(robot: Robot) {
-//        TODO()
+
+        val rd = robotsDirect[robot]!!
+
+        val sp = robotsSprite[robot]!!.setImages(blueSheet[rd+8],blueSheet[rd+12])
+        if (robot.owner.index == 1) { sp.setImages(redSheet[rd+8],redSheet[rd+12]) }
+
+        graphicEntityModule.commitEntityState(0.5, sp)
+        sp.setVisible(true).setLoop(true)
+        graphicEntityModule.commitEntityState(0.8, sp)
+        sp.setImages(blueSheet[rd],blueSheet[rd+4])
+        if (robot.owner.index == 1) { sp.setImages(redSheet[rd],redSheet[rd+4]) }
+        playerHP[robot.owner]!!.setText("HP: " + countHP(robot.owner))
+        robotsHP[robot]!!.setText(robot.health.toString())
+        graphicEntityModule.commitEntityState(1.0, sp, playerHP[robot.owner], robotsHP[robot])
+
     }
 
     fun triggerDeath(robot: Robot) {
-//        TODO()
+        robotsGroups[robot]!!.setScale(1.0, Curve.LINEAR)
+        graphicEntityModule.commitEntityState(0.8,  robotsGroups[robot]!!)
+        robotsGroups[robot]!!.setScale(0.1, Curve.LINEAR)
+        robotsGroups[robot]!!.setVisible(false)
+        playerHP[robot.owner]!!.setText("HP: " + countHP(robot.owner))
+        playerRobotsNum[robot.owner]!!.setText("Robots: " + arena.getAllRobotsOwnedBy(robot.owner).count().toString())
+        graphicEntityModule.commitEntityState(1.0, playerRobotsNum[robot.owner], robotsGroups[robot], playerHP[robot.owner])
+
+
+    }
+
+    fun copyGroup(robot: Robot){
+
+        val robotSprite = graphicEntityModule.createSpriteAnimation().setImages(blueSheet[1], blueSheet[5])
+            .setLoop(false)
+            .setScale((fieldHight * 0.8)/150.0)
+            .setZIndex(1)
+            .setDuration(1)
+
+        if(robot.owner.index == 1)
+        {
+            robotSprite.setImages(redSheet[3], redSheet[7])
+        }
+        robotsSprite.replace(robot, robotSprite)
+
+        val robotHP = graphicEntityModule.createText(robot.health.toString())
+            .setFontSize(25)
+            .setFillColor(0x00ff00)
+            .setAnchorY(0.5)
+            .setAnchorX(-0.8)
+            .setZIndex(3)
+            .setStrokeThickness(3.0) // Adding an outline
+            .setStrokeColor(0x000000)
+            .setFontFamily("Impact")
+            .setVisible(true)
+        robotsHP.replace(robot, robotHP)
+
+        val robotShield = graphicEntityModule.createSprite()
+            .setImage(Config.Presenter.SHIELD_SPRITE)
+            .setAnchor(.5)
+            .setZIndex(2)
+            .setScale(0.1)
+            .setVisible(false)
+
+        robotsShields.replace(robot, robotShield)
+
+        val robotGroup = graphicEntityModule.createGroup(robotSprite, robotHP, robotShield)
+            .setZIndex(3)
+        robotsGroups.replace(robot, robotGroup)
+    }
+
+    fun addRobot(robot: Robot) {
+
+        val robotSprite = graphicEntityModule.createSpriteAnimation().setImages(blueSheet[1], blueSheet[5])
+            .setLoop(false)
+            .setScale((fieldHight * 0.8)/150.0)
+            .setZIndex(1)
+            .setDuration(1)
+        var rd = 1
+
+        if(robot.owner.index == 1)
+        {
+            robotSprite.setImages(redSheet[3], redSheet[7])
+            rd = 3
+        }
+        robotsSprite.put(robot, robotSprite)
+
+        val robotPosition = arena.getPositionOf(robot)
+
+        val robotHP = graphicEntityModule.createText(robot.health.toString())
+            .setFontSize(25)
+            .setFillColor(0x00ff00)
+            .setAnchorY(0.5)
+            .setAnchorX(-0.8)
+            .setZIndex(3)
+            .setStrokeThickness(3.0) // Adding an outline
+            .setStrokeColor(0x000000)
+            .setFontFamily("Impact")
+
+        robotsHP.put(robot, robotHP)
+
+        val robotShield = graphicEntityModule.createSprite()
+            .setImage(Config.Presenter.SHIELD_SPRITE)
+            .setAnchor(.5)
+            .setZIndex(2)
+            .setScale(0.1)
+            .setVisible(false)
+
+        robotsShields.put(robot, robotShield)
+
+        val robotGroup = graphicEntityModule.createGroup(robotSprite, robotHP, robotShield)
+            .setZIndex(3)
+            .setX(robotPosition!!.x * fieldWidth + 470)
+            .setY(robotPosition!!.y * fieldHight + 50)
+        robotsGroups.put(robot, robotGroup)
+
+        robotsDirect.put(robot, rd)
+        playerRobotsNum[robot.owner]!!.setText("Robots: " + arena.getAllRobotsOwnedBy(robot.owner).count().toString())
+        playerHP[robot.owner]!!.setText("HP: " + countHP(robot.owner))
+        //graphicEntityModule.commitEntityState(1.0,  robotGroup)
     }
 }

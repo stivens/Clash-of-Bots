@@ -5,71 +5,49 @@ import com.codingame.game.core.Position
 import com.codingame.game.core.Robot
 import io.kotest.core.spec.style.ShouldSpec
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.string.shouldContainOnlyOnce
-import kotlin.random.Random
 
 class InputGeneratorTest : ShouldSpec({
-    context("generateInputFor") {
+    context("::minimapFor") {
         val arena = Arena(width = 12, height = 12)
-        val rng = Random(42)
 
         val player1 = Player()
         val player2 = Player()
 
-        val player1robots = listOf(
-            Pair( Robot(owner = player1, health = 100), Position(3, 3) ),
-            Pair( Robot(owner = player1, health = 100), Position(5, 8) ),
-            Pair( Robot(owner = player1, health =  50), Position(0, 0) ),
-        ).onEach { (robot, position) -> arena.emplace(robot, position) }
+        val robot1 = Robot(owner = player1, health = 100)
+        val robot2 = Robot(owner = player1, health = 100)
+        val robot3 = Robot(owner = player1, health =  50)
 
-        val player2robots = listOf(
-            Pair( Robot(owner = player2, health = 100), Position(3, 4) ),
-            Pair( Robot(owner = player2, health =  42), Position(9, 9) ),
-        ).onEach { (robot, position) -> arena.emplace(robot, position) }
+        val robot4 = Robot(owner = player2, health = 100)
+        val robot5 = Robot(owner = player2, health =  42)
 
-        should("return proper number of robots") {
-            val (_, player1input) = InputGenerator.generateInputFor(player1, arena, rng)
-            val (_, player2input) = InputGenerator.generateInputFor(player2, arena, rng)
-
-            player1input.split("\n")[1] shouldBe "${player1robots.size}"
-            player2input.split("\n")[1] shouldBe "${player2robots.size}"
-        }
-
-        should("return proper vision range") {
-            val (_, input1) = InputGenerator.generateInputFor(player1, arena, rng, visionRange = 1)
-            val (_, input2) = InputGenerator.generateInputFor(player1, arena, rng, visionRange = 3)
-
-            input1.split("\n").first() shouldBe "1"
-            input2.split("\n").first() shouldBe "3"
-        }
+        listOf(
+            Pair(robot1, Position(3, 3)),
+            Pair(robot2, Position(5, 8)),
+            Pair(robot3, Position(0, 0)),
+            Pair(robot4, Position(3, 4)),
+            Pair(robot5, Position(9, 9)),
+        ).forEach { (robot, position) -> arena.emplace(robot, position) }
 
         should("return proper minimap for given robot") {
-            val player1input = InputGenerator.generateInputFor(player1, arena, rng, visionRange = 1)
-                .let { (_, input) -> input.split("\n").drop(3).joinToString(separator = "\n") }
-
-            val player2input = InputGenerator.generateInputFor(player2, arena, rng, visionRange = 3)
-                .let { (_, input) -> input.split("\n").drop(3).joinToString(separator = "\n") }
-
-
-            player1input shouldContainOnlyOnce """
+            InputGenerator.minimapFor(robot1, arena, visionRange = 1) shouldBe """
                 0 0 0
                 0 100 0
                 0 -100 0
             """.trimIndent()
 
-            player1input shouldContainOnlyOnce """
+            InputGenerator.minimapFor(robot2, arena, visionRange = 1) shouldBe """
                 0 0 0
                 0 100 0
                 0 0 0
             """.trimIndent()
 
-            player1input shouldContainOnlyOnce """
+            InputGenerator.minimapFor(robot3, arena, visionRange = 1) shouldBe """
                 0 0 0
                 0 50 0
                 0 0 0
             """.trimIndent()
 
-            player2input shouldContainOnlyOnce """
+            InputGenerator.minimapFor(robot4, arena, visionRange = 3) shouldBe """
                 0 0 0 0 0 0 0
                 0 0 0 0 0 0 0
                 0 0 0 -100 0 0 0
@@ -79,7 +57,7 @@ class InputGeneratorTest : ShouldSpec({
                 0 0 0 0 0 0 0
             """.trimIndent()
 
-            player2input shouldContainOnlyOnce """
+            InputGenerator.minimapFor(robot5, arena, visionRange = 3) shouldBe """
                 0 0 0 0 0 0 0
                 0 0 0 0 0 0 0
                 0 0 0 0 0 0 0

@@ -1,12 +1,10 @@
 gameloop
 
-read visionRange:int
 read numberOfRobots:int
-read emptyLine:string(10)
 
-loop numberOfRobots loop visionRange loopline visionRange cell:int
+loop numberOfRobots loop 3 loopline 3 cell:int
 
-write SELFDESTRUCTION
+loop numberOfRobots write SELFDESTRUCTION
 
 OUTPUT
 GUARD | MOVE (LEFT/RIGHT/UP/DOWN) | ATTACK (LEFT/RIGHT/UP/DOWN) | SELFDESCTRUCTION <message>
