@@ -2,6 +2,7 @@ package com.codingame.game
 
 import com.codingame.game.core.*
 import com.codingame.game.util.Symmetry
+import com.codingame.gameengine.core.AbstractPlayer
 import com.codingame.gameengine.core.AbstractReferee
 import com.codingame.gameengine.core.GameManager
 import com.codingame.gameengine.core.MultiplayerGameManager
@@ -135,7 +136,7 @@ class Referee : AbstractReferee() {
     private fun parseOutputs(player: Player) {
         val outputs = try {
             player.getOutputs()
-        } catch (e: TimeoutException) {
+        } catch (e: AbstractPlayer.TimeoutException) {
             throw TimeoutException("Timeout occurred. Make sure you provide output for every robot you own.")
         }
 
