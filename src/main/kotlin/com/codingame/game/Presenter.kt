@@ -400,8 +400,9 @@ class Presenter(
             graphicEntityModule.commitEntityState(1.0, boom[i])
 
         }
+        playerHP[robot.owner]!!.setText("HP: " + countHP(robot.owner))
         playerRobotsNum[robot.owner]!!.setText("Robots: " + arena.getAllRobotsOwnedBy(robot.owner).count().toString())
-        graphicEntityModule.commitEntityState(0.99, playerRobotsNum[robot.owner])
+        graphicEntityModule.commitEntityState(0.99, playerRobotsNum[robot.owner], playerHP[robot.owner])
     }
 
     fun triggerDamage(robot: Robot) {
@@ -427,8 +428,9 @@ class Presenter(
         graphicEntityModule.commitEntityState(0.8,  robotsGroups[robot]!!)
         robotsGroups[robot]!!.setScale(0.1, Curve.LINEAR)
         robotsGroups[robot]!!.setVisible(false)
+        playerHP[robot.owner]!!.setText("HP: " + countHP(robot.owner))
         playerRobotsNum[robot.owner]!!.setText("Robots: " + arena.getAllRobotsOwnedBy(robot.owner).count().toString())
-        graphicEntityModule.commitEntityState(0.99, playerRobotsNum[robot.owner], robotsGroups[robot]!!)
+        graphicEntityModule.commitEntityState(0.99, playerRobotsNum[robot.owner], robotsGroups[robot], playerHP[robot.owner])
 
 
     }
@@ -456,7 +458,7 @@ class Presenter(
             .setStrokeThickness(3.0) // Adding an outline
             .setStrokeColor(0x000000)
             .setFontFamily("Impact")
-            //.setVisible(true)
+            .setVisible(true)
         robotsHP.replace(robot, robotHP)
 
         val robotShield = graphicEntityModule.createSprite()
@@ -521,6 +523,6 @@ class Presenter(
         robotsDirect.put(robot, rd)
         playerRobotsNum[robot.owner]!!.setText("Robots: " + arena.getAllRobotsOwnedBy(robot.owner).count().toString())
         playerHP[robot.owner]!!.setText("HP: " + countHP(robot.owner))
-        //graphicEntityModule.commitEntityState(0.0,  robotGroup)
+        //graphicEntityModule.commitEntityState(1.0,  robotGroup)
     }
 }
