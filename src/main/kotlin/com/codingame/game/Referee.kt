@@ -13,6 +13,7 @@ import com.google.inject.Inject
 
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
+import java.util.concurrent.TimeoutException
 import kotlin.IllegalArgumentException
 
 import kotlin.random.Random
@@ -129,7 +130,11 @@ class Referee : AbstractReferee() {
     }
 
     private fun parseOutputs(player: Player) {
-        val outputs = player.getOutputs()
+        val outputs = try {
+            player.getOutputs()
+        } catch (e: TimeoutException) {
+            throw TimeoutException("Timeout occurred. Make sure you provide output for every robot you own.")
+        }
 
         val actions = outputs.map {
             Action.tryParse(it).getOrElseThrow { _ -> IllegalArgumentException("Invalid action: $it.") } !!
