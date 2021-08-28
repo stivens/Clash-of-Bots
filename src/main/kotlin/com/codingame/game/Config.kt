@@ -11,7 +11,7 @@ object Config {
         const val EXPLOSION_DAMAGE = 4
         const val EXPLOSION_RANGE  = 1
         const val GUARD_MODIFIER   = 0.5
-        const val VISION_RANGE     = 1
+        const val VISION_RANGE     = 2
     }
 
     object Arena {

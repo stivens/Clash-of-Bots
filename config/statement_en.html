@@ -189,34 +189,38 @@
                     the number of robots you currently own.<br>
                     Followed by <var>k</var> minimaps.
 
-                    Minimap is a square of size <const>3x3</const> representing robot vision. <br><br>
+                    Minimap is a square of size <const>5x5</const> representing robot vision. <br><br>
 
                     Example minimap: <br> <br>
-                    <code>4 0 0</code> <br>
-                    <code>0 10 0</code> <br>
-                    <code>0 -10 0</code> <br> <br>
+                    <code>0 0 0 0 0</code><br>
+                    <code>0 -10 0 0 0</code><br>
+                    <code>0 0 10 0 0</code><br>
+                    <code>0 0 0 0 0</code><br>
+                    <code>0 0 0 0 0</code><br>
                     
 
                     <const>0</const> - empty square <br>
                     <const>n > 0</const> (positive integer) - ally robot with health equal n <br>
                     <const>n < 0</const> (negative integer) - enemy robot with health equal n <br>
                     <br>
-                    The current robot is always in the middle of the minimap (10 in the above example)
- <br>
+                    The current robot is always in the middle of the minimap (10 in the above example) <br>
                     <br>
+                    So the example above represents situation like this: <br>
+                    <img src="https://i.imgur.com/fGAGCfx.png">
                     <hr>
                     <br>
                     Example input: <br> <br>
-                    <code>3</code><br>
-                    <code>0 0 0</code><br>
-                    <code>0 10 0</code><br>
-                    <code>0 -10 0</code><br>
-                    <code>0 0 0</code><br>
-                    <code>0 4 0</code><br>
-                    <code>0 0 0</code><br>
-                    <code>0 0 5</code><br>
-                    <code>0 10 0</code><br>
-                    <code>0 0 0</code><br>
+                    <code>2</code><br>
+                    <code>0 0 0 0 0</code><br>
+                    <code>0 -10 0 0 0</code><br>
+                    <code>0 0 10 0 0</code><br>
+                    <code>0 0 0 0 0</code><br>
+                    <code>0 0 0 0 0</code><br>
+                    <code>0 0 0 0 0</code><br>
+                    <code>0 -10 0 0 0</code><br>
+                    <code>0 0 10 0 0</code><br>
+                    <code>0 0 0 0 0</code><br>
+                    <code>0 0 0 0 0</code><br>
                 </div>
             </div>
         </div>

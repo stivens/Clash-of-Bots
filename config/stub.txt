@@ -2,7 +2,7 @@ gameloop
 
 read numberOfRobots:int
 
-loop numberOfRobots loop 3 loopline 3 cell:int
+loop numberOfRobots loop 5 loopline 5 cell:int
 
 loop numberOfRobots write SELFDESTRUCTION
 
