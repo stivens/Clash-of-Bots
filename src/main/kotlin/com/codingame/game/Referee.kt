@@ -77,8 +77,11 @@ class Referee : AbstractReferee() {
         }
     }
 
-    private fun shouldSpawnNewRobots(turn: Int) = turn % Config.Referee.SPAWN_TURN_DELAY == 0
-    private fun isGameover() = gameManager.activePlayers.size < gameManager.playerCount
+    private fun shouldSpawnNewRobots(turn: Int) =
+        (turn % Config.Referee.SPAWN_TURN_DELAY == 0) && (turn < Config.Referee.MAX_TURNS - 1)
+
+    private fun isGameover() =
+        gameManager.activePlayers.size < gameManager.playerCount
 
     override fun onEnd() {
         gameManager.activePlayers.forEach { player ->
