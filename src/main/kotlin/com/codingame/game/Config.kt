@@ -20,13 +20,13 @@ object Config {
     }
 
     object Referee {
-        const val MAX_TURNS           = 100
+        const val MAX_TURNS           = 150
         const val FIRST_TURN_MAX_TIME = 1000
         const val TURN_MAX_TIME       = 50
         const val FRAME_DURATION      = 500
 
         val SPAWN_SYMMETRY_CENTER        = Position(0, 0)
-        const val SPAWN_TURN_DELAY       = 7
+        const val SPAWN_TURN_DELAY       = 5
         const val SPAWN_ATTEMPTS_LIMIT   = 15
         const val SPAWN_COMPLEMENT_RANGE = 1
     }
