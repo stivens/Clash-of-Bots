@@ -20,7 +20,7 @@ object Config {
     }
 
     object Referee {
-        const val MAX_TURNS           = 150
+        const val MAX_TURNS           = 100
         const val FIRST_TURN_MAX_TIME = 1000
         const val TURN_MAX_TIME       = 50
         const val FRAME_DURATION      = 500
