@@ -4,7 +4,7 @@ read numberOfRobots:int
 
 loop numberOfRobots loop 3 loopline 3 cell:int
 
-write SELFDESTRUCTION
+loop numberOfRobots write SELFDESTRUCTION
 
 OUTPUT
 GUARD | MOVE (LEFT/RIGHT/UP/DOWN) | ATTACK (LEFT/RIGHT/UP/DOWN) | SELFDESCTRUCTION <message>
