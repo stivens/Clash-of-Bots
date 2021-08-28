@@ -148,16 +148,8 @@ class Presenter(
             .setFontSize(60)
             .setStrokeThickness(3.0))
     }
-
-    private fun countHP(player: Player): String
-    {
-        var hp = 0
-        for(robot in arena.getAllRobotsOwnedBy(player))
-        {
-            hp += robot.first.health
-        }
-        return hp.toString()
-    }
+    private fun countHP(player: Player): Int =
+        arena.getAllRobotsOwnedBy(player).map { (robot, _) -> robot.health }.sum()
 
     fun triggerGuard(robot: Robot, guard: Guard) {
         robotsShields[robot]!!.setScale(0.1).setVisible(true)
@@ -402,7 +394,7 @@ class Presenter(
         }
         playerHP[robot.owner]!!.setText("HP: " + countHP(robot.owner))
         playerRobotsNum[robot.owner]!!.setText("Robots: " + arena.getAllRobotsOwnedBy(robot.owner).count().toString())
-        graphicEntityModule.commitEntityState(0.99, playerRobotsNum[robot.owner], playerHP[robot.owner])
+        graphicEntityModule.commitEntityState(1.0, playerRobotsNum[robot.owner], playerHP[robot.owner])
     }
 
     fun triggerDamage(robot: Robot) {
@@ -430,7 +422,7 @@ class Presenter(
         robotsGroups[robot]!!.setVisible(false)
         playerHP[robot.owner]!!.setText("HP: " + countHP(robot.owner))
         playerRobotsNum[robot.owner]!!.setText("Robots: " + arena.getAllRobotsOwnedBy(robot.owner).count().toString())
-        graphicEntityModule.commitEntityState(0.99, playerRobotsNum[robot.owner], robotsGroups[robot], playerHP[robot.owner])
+        graphicEntityModule.commitEntityState(1.0, playerRobotsNum[robot.owner], robotsGroups[robot], playerHP[robot.owner])
 
 
     }
