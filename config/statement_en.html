@@ -10,9 +10,6 @@
             <div>
                 End the game with more <b>alive robots</b> than your opponent.
             </div>
-            <center style="margin: 20px">
-                <img src="https://cdn.pixabay.com/photo/2016/08/23/18/50/spider-1615195_960_720.png" style="margin-bottom: 5px; height: 400px;">
-            </center>
         </div>
         <div style="margin-bottom: 10px">
             The game takes place in an arena, where robots fight.
@@ -68,18 +65,19 @@
                 The possible actions are:
                 <ul>
                     <li>
-                        <action>GUARD</action>: Command a robot to raise a guard. It reduces taken damage by 50% for this turn. (*rounded down)
+                        <action>GUARD</action>: Command a robot to raise a guard. Reduces taken damage by 50% for this turn. (*damage taken is rounded down)
                     </li>
                     <li>
-                        <action>MOVE &lt;DIRECTION&gt;</action>: Command a robot to move in a given direction. If the move would cause a collision, it is canceled and involved robots are damaged.
+                        <action>MOVE &lt;DIRECTION&gt;</action>: Command a robot to move in a given direction. If the move would cause a collision, it is canceled and involved robots are damaged. (<const>1</const> damage)
                     </li>
                     <li>
-                        <action>ATTACK &lt;DIRECTION&gt;</action>: Command a robot to attack a neighbor cell.
+                        <action>ATTACK &lt;DIRECTION&gt;</action>: Command a robot to attack a neighbor cell. If any robot is present there, it takes <const>2</const> damage.
                     </li>
                     <li>
-                        <action>SELFDESTRUCTION</action>: Command a robot to activate self-destruction and explode damaging neighbor cells.
+                        <action>SELFDESTRUCTION</action>: Command a robot to activate self-destruction and explode damaging neighbor cells. (<const>4</const> damage)
                     </li>
                 </ul>
+                Actions are performed in the above order. So all the <const>attacks</const> are executed at the same time but after every <const>move</const> was performed. Effectively it is possible to dodge an <const>attack</const> or neutralize a robot before it explodes due to <const>selfdestruction</const>.
             </div>
 
             <h3 style="font-size: 14px;
@@ -149,7 +147,6 @@
                 🐞 Debugging tips</h3>
             <ul>
                 <li>Hover over a robot to see extra information about it</li>
-                <li>Append text after any command and that text will appear next to robot</li>
                 <li>Use the keyboard to control the action: space to play/pause, arrows to step 1 frame at a time</li>
             </ul>
 
@@ -165,53 +162,13 @@
         <div class="statement-expert-rules-content">
             <ul style="padding-left: 20px;padding-bottom: 0">
                 <li>Players start the game with two robots.</li>
-                <li>Every ? rounds new robots are spawned.</li>
-                <li>Ordering of robots in the input is randomized</li>
+                <li>Every 5 rounds new robots are spawned.</li>
+                <li>Ordering of robots in the input is randomized.</li>
                 <li>
-                    You can check out the source code of this game <a rel="nofollow" target="_blank" href="https://github.com/stivens/Clash-of-Bots">on this GitHub repo</a>.
+                    You can check out the source code of this game <a rel="nofollow" target="_blank" href="https://github.com/stivens/Clash-of-Bots">on GitHub</a>.
                 </li>
             </ul>
         </div>
-
-        <pre>
-            object Config {
-                object Robots {
-                    const val MAX_HEALTH: Int = 10
-                    const val ATTACK_DAMAGE: Int = 2
-                    const val COLLISION_DAMAGE: Int = 1
-                    const val EXPLOSION_DAMAGE: Int = 4
-                    const val EXPLOSION_RANGE: Int = 1
-                    const val GUARD_MODIFIER: Double = 0.5
-                    const val VISION_RANGE: Int = 1
-                }
-
-                object Arena {
-                    const val WIDTH: Int = 10
-                    const val HEIGHT: Int = 8
-                }
-
-                object Referee {
-                    const val MAX_TURNS: Int = 100
-                    const val FIRST_TURN_MAX_TIME = 1000
-                    const val TURN_MAX_TIME = 50
-                    const val FRAME_DURATION = 500
-
-                    val SPAWN_SYMMETRY_CENTER = Position(0, 0)
-                    const val SPAWN_TURN_DELAY: Int = 10
-                    const val SPAWN_ATTEMPTS_LIMIT: Int = 15
-                    const val SPAWN_COMPLEMENT_RANGE = 1
-                }
-
-                object Interpreter {
-                    val ACTION_PRIORITY = mapOf(
-                                  Guard::class to 0,
-                                   Move::class to 1,
-                                 Attack::class to 2,
-                        Selfdestruction::class to 3,
-                    )
-                }
-            }
-        </pre>
     </div>
 
     <!-- PROTOCOL -->
@@ -234,30 +191,32 @@
 
                     Minimap is a square of size <const>3x3</const> representing robot vision. <br><br>
 
-                    Example minimap:
-                    <pre>
-                        4 0 0
-                        0 10 0
-                        0 -10 0
-                    </pre>
+                    Example minimap: <br> <br>
+                    <code>4 0 0</code> <br>
+                    <code>0 10 0</code> <br>
+                    <code>0 -10 0</code> <br> <br>
+                    
 
                     <const>0</const> - empty square <br>
-                    <const>n > 0</const> - ally robot with health equal n <br>
-                    <const>n < 0</const> - enemy robot with health equal n <br><br><br><hr>
-
-                    Example input:
-                    <pre>
-                        3
-                        0 0 0
-                        0 10 0
-                        0 -10 0
-                        0 0 0
-                        0 4 0
-                        0 0 0
-                        0 0 5
-                        0 10 0
-                        0 0 0
-                    </pre>
+                    <const>n > 0</const> (positive integer) - ally robot with health equal n <br>
+                    <const>n < 0</const> (negative integer) - enemy robot with health equal n <br>
+                    <br>
+                    The current robot is always in the middle of the minimap (10 in the above example)
+ <br>
+                    <br>
+                    <hr>
+                    <br>
+                    Example input: <br> <br>
+                    <code>3</code><br>
+                    <code>0 0 0</code><br>
+                    <code>0 10 0</code><br>
+                    <code>0 -10 0</code><br>
+                    <code>0 0 0</code><br>
+                    <code>0 4 0</code><br>
+                    <code>0 0 0</code><br>
+                    <code>0 0 5</code><br>
+                    <code>0 10 0</code><br>
+                    <code>0 0 0</code><br>
                 </div>
             </div>
         </div>
@@ -266,9 +225,9 @@
         <div class="blk">
             <div class="title">Output</div>
             <div class="text">
-                k lines with your commands. <br>
-                k is the number of your robots. <br>
-                Line number i contains command for the i-th robot (relative to input ordering)
+                <const>k</const> lines with your commands. <br>
+                <const>k</const> is the number of your robots. <br>
+                Line number <const>i</const> contains command for the i-th robot (relative to input ordering)
 
                 <div class="statement-new-league-rule">
                     <ul style="padding-left: 20px;padding-top: 0">
@@ -281,7 +240,7 @@
                         </li>
 
                         <li>
-                            <action>attack [left|right|up|down]</action>: command your robot to attack the cell that is [left|right|up|down] to him.
+                            <action>attack [left|right|up|down]</action>: command your robot to attack the cell that is [left|right|up|down] to it.
                         </li>
                         <li>
 
