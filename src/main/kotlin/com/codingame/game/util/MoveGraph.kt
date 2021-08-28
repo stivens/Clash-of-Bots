@@ -29,10 +29,18 @@ class MoveGraph {
         checkConsistency()
 
         val q = ArrayDeque<Position>()
+        val visited = mutableSetOf<Position>()
+
+        fun addToQueue(position: Position) {
+            if (!visited.contains(position)) {
+                visited.add(position)
+                q.add(position)
+            }
+        }
 
         pos2vertex.forEach { (_, vertex) ->
             if (vertex.counter > 1) {
-                vertex.incomingEdges.forEach { q.add(it) }
+                vertex.incomingEdges.forEach { addToQueue(it) }
             }
         }
 
@@ -45,7 +53,7 @@ class MoveGraph {
             ).run {
                 counter += 1
                 if (counter > 1) {
-                    incomingEdges.forEach { q.add(it) }
+                    incomingEdges.forEach { addToQueue(it) }
                 }
             }
         }
