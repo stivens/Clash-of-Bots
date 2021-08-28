@@ -107,14 +107,7 @@ class Referee : AbstractReferee() {
 
         players.forEach(::sendInputs)
         players.forEach(Player::execute)
-        players.forEach { player ->
-            try {
-                parseOutputs(player)
-            }
-            catch (e: Exception) {
-                disqualify(player, e.message ?: "")
-            }
-        }
+        players.forEach(::parseOutputs)
     }
 
     private fun sendInputs(player: Player) {
@@ -134,17 +127,23 @@ class Referee : AbstractReferee() {
     }
 
     private fun parseOutputs(player: Player) {
-        val outputs = try {
-            player.getOutputs()
-        } catch (e: AbstractPlayer.TimeoutException) {
-            throw TimeoutException("Timeout occurred. Make sure you provide output for every robot you own.")
-        }
+        try {
+            val outputs = player.getOutputs()
 
-        val actions = outputs.map {
-            Action.tryParse(it).getOrElseThrow { _ -> IllegalArgumentException("Invalid action: $it.") } !!
-        }
+            val actions = outputs.map {
+                Action
+                    .tryParse(it)
+                    .getOrElseThrow { _ -> IllegalArgumentException("Invalid action: $it.") } !!
+            }
 
-        player.actions = actions
+            player.actions = actions
+        }
+        catch (e: AbstractPlayer.TimeoutException) {
+            disqualify(player, "Timeout occurred. Make sure you provide output for every robot you own.")
+        }
+        catch (e: Exception) {
+            disqualify(player, e.message ?: "")
+        }
     }
 
     private fun disqualify(player: Player, reason: String) {
