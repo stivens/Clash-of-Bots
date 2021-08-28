@@ -29,6 +29,7 @@ object Config {
         const val SPAWN_TURN_DELAY       = 5
         const val SPAWN_ATTEMPTS_LIMIT   = 15
         const val SPAWN_COMPLEMENT_RANGE = 1
+        const val SPAWN_SIZE_MULTIPLIER  = 2
     }
 
     object Interpreter {

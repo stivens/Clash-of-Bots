@@ -14,7 +14,6 @@ import com.google.inject.Inject
 
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
-import java.util.concurrent.TimeoutException
 import kotlin.IllegalArgumentException
 
 import kotlin.random.Random
@@ -74,7 +73,9 @@ class Referee : AbstractReferee() {
         }
 
         if (shouldSpawnNewRobots(turn)) {
-            pickSpawnPoints()?.doSpawn(arena, player1, player2, presenter)
+            for (i in 1..Config.Referee.SPAWN_SIZE_MULTIPLIER) {
+                pickSpawnPoints()?.doSpawn(arena, player1, player2, presenter)
+            }
         }
     }
 
