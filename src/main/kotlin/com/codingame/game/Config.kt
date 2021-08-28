@@ -23,7 +23,7 @@ object Config {
         const val MAX_TURNS           = 100
         const val FIRST_TURN_MAX_TIME = 1000
         const val TURN_MAX_TIME       = 50
-        const val FRAME_DURATION      = 500
+        const val FRAME_DURATION      = 1000
 
         val SPAWN_SYMMETRY_CENTER        = Position(0, 0)
         const val SPAWN_TURN_DELAY       = 5
