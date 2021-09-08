@@ -74,7 +74,7 @@
                         <action>ATTACK &lt;DIRECTION&gt;</action>: Command a robot to attack a neighbor cell. If any robot is present there, it takes <const>2</const> damage.
                     </li>
                     <li>
-                        <action>SELFDESTRUCTION</action>: Command a robot to activate self-destruction and explode damaging neighbor cells. (<const>4</const> damage)
+                        <action>SELFDESTRUCTION</action>: Command a robot to activate self-destruction and explode, damaging all the robots around him. (<const>4</const> damage, <const>3x3</const> square)
                     </li>
                 </ul>
                 Actions are performed in the above order. So all the <const>attacks</const> are executed at the same time but after every <const>move</const> was performed. Effectively it is possible to dodge an <const>attack</const> or neutralize a robot before it explodes due to <const>selfdestruction</const>.
