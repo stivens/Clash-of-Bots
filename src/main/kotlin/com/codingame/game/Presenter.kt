@@ -156,7 +156,7 @@ class Presenter(
 
     fun triggerGuard(robot: Robot, guard: Guard) {
         robotsShields[robot]!!.setScale(0.1).setVisible(true)
-        graphicEntityModule.commitWorldState(0.0)
+        graphicEntityModule.commitEntityState(0.0, robotsShields[robot])
         robotsShields[robot]!!.setScale(0.05, Curve.LINEAR)
     }
 
