@@ -73,7 +73,7 @@ class Referee : AbstractReferee() {
         }
 
         if (shouldSpawnNewRobots(turn)) {
-            for (i in 1..Config.Referee.SPAWN_SIZE_MULTIPLIER) {
+            repeat(Config.Referee.SPAWN_SIZE_MULTIPLIER) {
                 pickSpawnPoints()?.doSpawn(arena, player1, player2, presenter)
             }
         }
